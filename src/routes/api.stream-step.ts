@@ -137,18 +137,59 @@ export const Route = createFileRoute("/api/stream-step")({
           });
         }
 
+        // 1. Double-execution guard: if step is already done, return existing state safely
+        if (currentStep.status === "done") {
+          return new Response(
+            JSON.stringify({
+              status: "already_completed",
+              stepId: currentStep.id,
+              summary: currentStep.summary || "Step already completed",
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        // 2. Concurrency guard: if step is already running and started recently (<90s), reject duplicate execution
+        if (currentStep.status === "running" && currentStep.started_at) {
+          const startedMs = new Date(currentStep.started_at).getTime();
+          if (Date.now() - startedMs < 90_000) {
+            return new Response(
+              JSON.stringify({
+                status: "already_running",
+                stepId: currentStep.id,
+                message: "Step is currently being processed by another stream.",
+              }),
+              {
+                status: 409,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
+          }
+        }
+
         const doneSteps = (allSteps ?? []).filter((s) => s.status === "done");
         const remainingSteps = (allSteps ?? []).filter((s) => s.idx > idx);
         const isLastStep = idx === (allSteps ?? []).length - 1;
 
-        // Mark step running
-        await db
+        // Atomic claim: Mark step running only if not already done
+        const { error: claimErr } = await db
           .from("build_steps")
           .update({
             status: "running",
             started_at: new Date().toISOString(),
           })
-          .eq("id", currentStep.id);
+          .eq("id", currentStep.id)
+          .neq("status", "done");
+
+        if (claimErr) {
+          return new Response(JSON.stringify({ error: "Could not claim step execution" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
 
         await db.from("build_runs").update({ status: "running" }).eq("id", run.id);
 
@@ -223,9 +264,23 @@ export const Route = createFileRoute("/api/stream-step")({
                   .map((f) => `- ${f.path}${f.is_upload ? " (upload)" : ""}: ${f.content.length}b`)
                   .join("\n") || "(none)";
 
-              const fullFiles = (files ?? [])
-                .map((f) => `--- FILE: ${f.path}\n${f.content}`)
-                .join("\n\n");
+              const FILE_BUDGET = 120_000;
+              let fileBytes = 0;
+              const includedFiles: string[] = [];
+              for (const f of (files ?? []).filter(
+                (f) => !f.is_upload || /\.(html|css|js|jsx|ts|tsx|php|json|md|txt|svg)$/i.test(f.path),
+              )) {
+                if (fileBytes >= FILE_BUDGET) break;
+                const remaining = FILE_BUDGET - fileBytes;
+                const body =
+                  f.content.length > remaining
+                    ? f.content.slice(0, remaining) + "\n/* ...truncated for token budget... */"
+                    : f.content;
+                includedFiles.push(`--- FILE: ${f.path}\n${body}`);
+                fileBytes += body.length;
+              }
+
+              const fullFiles = includedFiles.join("\n\n");
 
               const projectNotesContext = proj?.agent_notes
                 ? `Project Notes:\n${proj.agent_notes}\n\n`

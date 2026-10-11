@@ -35,6 +35,7 @@ export type RunItem = {
   prompt: string;
   mode: string;
   status: string;
+  kind?: string | null;
   error?: string | null;
   created_at: string;
   finished_at?: string | null;
@@ -343,7 +344,8 @@ export function MessageList({
         const isPlan = m.kind === "plan";
         const options: string[] =
           isQuestion && Array.isArray(m.meta?.options) ? m.meta.options : [];
-        const planRunId = isPlan ? m.meta?.runId : null;
+        const planRunId =
+          isPlan && typeof m.meta?.runId === "string" ? m.meta.runId : null;
 
         // User message: right-aligned bubble, bg-secondary, rounded-2xl rounded-br-md, max-w 85%
         if (isUser) {

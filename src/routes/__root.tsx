@@ -78,39 +78,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5" },
       { name: "theme-color", content: "#000000" },
-      { title: "DevLoadable — Next-Gen AI Fullstack App Builder | Part of ZarGPT" },
+      { title: "DevLoadable — AI Web App Builder & Live Editor" },
       {
         name: "description",
         content:
-          "Build production-ready fullstack web applications in seconds with DevLoadable by ZarGPT. Powered by ZarGPT Build Max & Mini. Instant live preview, multi-file code editing, and one-click deployment.",
+          "Build, edit, and publish web applications with AI assistance. Instant live preview, multi-file code workspace, and static site hosting with 1,000 free daily messages.",
       },
-      {
-        name: "keywords",
-        content:
-          "DevLoadable, ZarGPT, AI app builder, fullstack AI builder, web app generator, React app builder, code generator, web development AI, Ahmed Ishtiaque Zarir",
-      },
-      { name: "author", content: "Ahmed Ishtiaque Zarir (https://ahmedishtiaquezarir.pro.bd/)" },
-      { property: "og:site_name", content: "DevLoadable · Part of ZarGPT" },
-      { property: "og:title", content: "DevLoadable — Next-Gen AI Fullstack App Builder | Part of ZarGPT" },
+      { name: "author", content: "Ahmed Ishtiaque Zarir" },
+      { property: "og:site_name", content: "DevLoadable" },
+      { property: "og:title", content: "DevLoadable — AI Web App Builder & Live Editor" },
       {
         property: "og:description",
         content:
-          "Build production-ready fullstack web applications in seconds with DevLoadable by ZarGPT. Powered by ZarGPT Build Max & Mini. Instant live preview, multi-file code editing, and one-click deployment.",
+          "Build, edit, and publish web applications with AI assistance. Instant live preview, multi-file code workspace, and static site hosting with 1,000 free daily messages.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/faviconandlogo.png" },
+      { property: "og:url", content: "https://devloadable.ai.studio/" },
+      { property: "og:image", content: "https://devloadable.ai.studio/faviconandlogo.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "DevLoadable — Next-Gen AI Fullstack App Builder | Part of ZarGPT" },
+      { name: "twitter:title", content: "DevLoadable — AI Web App Builder & Live Editor" },
       {
         name: "twitter:description",
         content:
-          "Build production-ready fullstack web applications in seconds with DevLoadable by ZarGPT. Powered by ZarGPT Build Max & Mini. Instant live preview, multi-file code editing, and one-click deployment.",
+          "Build, edit, and publish web applications with AI assistance. Instant live preview, multi-file code workspace, and static site hosting with 1,000 free daily messages.",
       },
-      { name: "twitter:image", content: "/faviconandlogo.png" },
+      { name: "twitter:image", content: "https://devloadable.ai.studio/faviconandlogo.png" },
       { name: "application-name", content: "DevLoadable" },
       { name: "apple-mobile-web-app-title", content: "DevLoadable" },
     ],
     links: [
+      { rel: "canonical", href: "https://devloadable.ai.studio/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

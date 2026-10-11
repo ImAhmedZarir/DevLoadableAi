@@ -664,16 +664,6 @@ export function applyFileEdit(
     }
   }
 
-  // 11. Smart Fallback: If newText has content, append it to the file instead of breaking the build
-  const nContent = (nStripped || nNorm).trim();
-  if (nContent.length > 0) {
-    const appended = cNorm.trimEnd() + "\n\n" + nContent + "\n";
-    return {
-      success: true,
-      result: isOriginalCRLF ? appended.replace(/\n/g, "\r\n") : appended,
-    };
-  }
-
   return {
     success: false,
     error: "dl-old did not occur in the file.",
@@ -948,20 +938,12 @@ export class AgentStreamingParser {
     let truncated: TruncatedInfo | undefined;
 
     if (this.activeTag) {
-      if (this.activeTag.type === "write" && this.buffer.trim().length > 0) {
-        const rawContent = this.buffer;
-        const content = cleanWriteContent(rawContent, this.activeTag.path);
-        this.emit({ type: "write", path: this.activeTag.path, content });
-      } else if (this.activeTag.type === "edit" && this.buffer.trim().length > 0) {
-        const parsed = parseEditContent(this.buffer);
-        if (parsed) {
-          this.emit({
-            type: "edit",
-            path: this.activeTag.path,
-            oldText: parsed.oldText,
-            newText: parsed.newText,
-          });
-        }
+      if (this.activeTag.type === "write" || this.activeTag.type === "edit") {
+        truncated = {
+          tag: this.activeTag.type,
+          path: this.activeTag.path,
+          partialContent: this.buffer,
+        };
       }
       this.activeTag = null;
       this.buffer = "";

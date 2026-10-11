@@ -138,8 +138,8 @@ function Admin() {
   const [copiedDefaultPrompt, setCopiedDefaultPrompt] = useState(false);
   const [provider, setProvider] = useState("build-max");
   const [savingPrompt, setSavingPrompt] = useState(false);
-  const [unlimitedRequests, setUnlimitedRequests] = useState(true);
-  const [dailyMessageLimit, setDailyMessageLimit] = useState("5");
+  const [unlimitedRequests, setUnlimitedRequests] = useState(false);
+  const [dailyMessageLimit, setDailyMessageLimit] = useState("1000");
   const [savingLimits, setSavingLimits] = useState(false);
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [disabledSkills, setDisabledSkills] = useState<string[]>([]);
@@ -787,8 +787,7 @@ function Admin() {
                   Daily Message Limit Per User
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Applied when unlimited requests is turned off. Evaluates messages sent per
-                  calendar day.
+                  Applied when unlimited requests is turned off. Evaluates user messages sent per UTC calendar day (resets daily at 00:00:00 UTC). Default is 1,000.
                 </p>
 
                 <div className="mt-3 flex items-center gap-3">
@@ -796,12 +795,12 @@ function Admin() {
                     id="dailyLimit"
                     type="number"
                     min="1"
-                    max="1000"
+                    max="50000"
                     value={dailyMessageLimit}
                     onChange={(e) => setDailyMessageLimit(e.target.value)}
                     className="w-28 rounded-lg border border-border/80 bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-ring"
                   />
-                  <span className="text-xs text-muted-foreground">messages / day</span>
+                  <span className="text-xs text-muted-foreground">messages / UTC day</span>
                 </div>
               </div>
 

@@ -127,8 +127,8 @@ export const adminGetSettings = createServerFn({ method: "POST" })
     return {
       master_prompt: map.master_prompt ?? "",
       agent_provider: map.agent_provider ?? "build-max",
-      agent_unlimited_requests: map.agent_unlimited_requests ?? "true",
-      daily_message_limit: map.daily_message_limit ?? "5",
+      agent_unlimited_requests: map.agent_unlimited_requests ?? "false",
+      daily_message_limit: map.daily_message_limit ?? "1000",
       disabled_skills: map.disabled_skills ?? "[]",
       default_system_prompt: DEFAULT_SYSTEM_PROMPT,
     };
@@ -153,6 +153,23 @@ export const adminUpdateSetting = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { assertAdmin } = await import("./admin-helpers.server");
     await assertAdmin(context.supabase, context.userId);
+
+    // Validate setting values strictly
+    if (data.key === "daily_message_limit") {
+      const num = parseInt(data.value, 10);
+      if (isNaN(num) || num < 1 || num > 50000) {
+        throw new Error("Daily message limit must be a positive integer between 1 and 50,000.");
+      }
+    } else if (data.key === "agent_unlimited_requests") {
+      if (data.value !== "true" && data.value !== "false") {
+        throw new Error("Unlimited requests setting must be 'true' or 'false'.");
+      }
+    } else if (data.key === "agent_provider") {
+      if (data.value !== "build-max" && data.value !== "build-mini") {
+        throw new Error("Agent provider must be 'build-max' or 'build-mini'.");
+      }
+    }
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("app_settings").upsert(
       {

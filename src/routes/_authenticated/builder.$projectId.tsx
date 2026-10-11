@@ -1074,7 +1074,7 @@ function Builder() {
     if (!slug) return;
     try {
       const r = await pubFn({ data: { projectId, slug } });
-      setPub({ slug: r.slug });
+      setPub({ slug: r.slug, published_at: new Date().toISOString() });
       toast.success(`Published at /p/${r.slug}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");

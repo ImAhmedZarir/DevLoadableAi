@@ -172,8 +172,8 @@ ${getStorageShimScript()}
           if (pub.show_badge !== false) {
             const badgeHtml = `
   <a href="https://zargpt.ai.studio/" target="_blank" rel="noopener" style="position:fixed;bottom:12px;right:12px;z-index:2147483647;font-family:system-ui,-apple-system,sans-serif;font-size:12px;line-height:1;padding:6px 12px;border-radius:9999px;background:rgba(9,9,11,0.85);color:#f4f4f5;border:1px solid rgba(255,255,255,0.12);text-decoration:none;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.3);display:inline-flex;align-items:center;gap:6px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#8b7bff,#22d3ee);"></span>
-    Built with ZarGPT DevLoadable
+    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ffffff;box-shadow:0 0 6px rgba(255,255,255,0.6);"></span>
+    Built with DevLoadable
   </a>`;
             if (/<\/body>/i.test(html)) {
               html = html.replace(/<\/body>/i, `${badgeHtml}\n</body>`);
@@ -194,13 +194,14 @@ ${getStorageShimScript()}
           }
         }
 
-        return new Response(body, {
+        return new Response(body as BodyInit, {
           headers: {
             "content-type": mime,
             "cache-control": "public, max-age=60",
             "Content-Security-Policy":
               "sandbox allow-scripts allow-forms allow-popups allow-modals",
             "X-Content-Type-Options": "nosniff",
+            "X-Robots-Tag": "noindex, nofollow",
             "Access-Control-Allow-Origin": "*",
           },
         });

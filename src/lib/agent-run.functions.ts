@@ -72,9 +72,12 @@ export const startRun = createServerFn({ method: "POST" })
       systemPrompt += `\n\n${skillsPrompt}`;
     }
 
-    const providerId = DEFAULT_PROVIDER;
-    const model = MODELS[DEFAULT_PROVIDER].model;
-    const unlimitedRequests = (settingsMap.get("agent_unlimited_requests") ?? "true") === "true";
+    const requestedProvider = data.provider;
+    const providerId: ModelProvider =
+      requestedProvider === "build-mini" || requestedProvider === "build-max"
+        ? requestedProvider
+        : DEFAULT_PROVIDER;
+    const model = MODELS[providerId].model;
 
     // Autofix verification
     if (data.kind === "autofix") {
@@ -110,17 +113,14 @@ export const startRun = createServerFn({ method: "POST" })
       }
     }
 
-    // Atomic quota check & consume (autofix runs do NOT consume daily quota)
-    if (data.kind !== "autofix") {
-      const { data: allowed, error: quotaErr } = await supabase.rpc("consume_daily_message");
-      if (quotaErr) {
-        console.warn("consume_daily_message error, continuing:", quotaErr);
-      } else if (allowed === false) {
-        throw new Error(
-          "Daily limit reached. Ask an admin to raise the limit or try again tomorrow.",
-        );
-      }
-    }
+    // Unified fail-closed daily quota check
+    const { checkAndConsumeMessageQuota } = await import("./quota-policy.server");
+    await checkAndConsumeMessageQuota({
+      supabase,
+      userId,
+      isAutofix: data.kind === "autofix",
+      idempotencyKey: `${data.projectId}:${cleanPrompt}`,
+    });
 
     // 2. Check project ownership
     const { data: proj } = await supabase
@@ -231,7 +231,7 @@ export const startRun = createServerFn({ method: "POST" })
 
     // 4. PLAN or BUILD mode
     // Snapshot state before run (modes plan and build only, not autofix)
-    if (data.mode !== "chat" && data.kind !== "autofix") {
+    if (data.kind !== "autofix") {
       const { snapshotVersion } = await import("./version.functions");
       await snapshotVersion(
         supabase,
@@ -934,7 +934,9 @@ async function executeStepRounds({
     const readPaths: string[] = [];
     const editErrors: string[] = [];
     let roundRaw = "";
-    let askedQuestion: { question: string; options: string[] } | null = null;
+    const stepState = {
+      askedQuestion: null as { question: string; options: string[] } | null,
+    };
 
     let eventQueue = Promise.resolve();
 
@@ -1060,7 +1062,7 @@ async function executeStepRounds({
       } else if (event.type === "read") {
         readPaths.push(event.path);
       } else if (event.type === "ask") {
-        askedQuestion = { question: event.question, options: event.options };
+        stepState.askedQuestion = { question: event.question, options: event.options };
       } else if (event.type === "notes") {
         await supabase.from("projects").update({ agent_notes: event.notes }).eq("id", projectId);
       }
@@ -1146,22 +1148,23 @@ async function executeStepRounds({
       finalSummary = finishResult.summary;
     }
 
-    if (askedQuestion) {
+    if (stepState.askedQuestion) {
+      const q = stepState.askedQuestion;
       await eventQueue;
       await supabase.from("messages").insert({
         project_id: projectId,
         user_id: userId,
         role: "assistant",
-        content: askedQuestion.question,
+        content: q.question,
         kind: "question",
-        meta: { options: askedQuestion.options, runId },
+        meta: { options: q.options, runId },
       });
       await supabase.from("build_runs").update({ status: "waiting" }).eq("id", runId);
 
       return {
         waiting: true,
-        question: askedQuestion.question,
-        options: askedQuestion.options,
+        question: q.question,
+        options: q.options,
       };
     }
 

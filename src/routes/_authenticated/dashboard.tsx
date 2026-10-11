@@ -71,9 +71,8 @@ function getProjectGradient(id: string) {
     hash = (hash << 5) - hash + id.charCodeAt(i);
     hash |= 0;
   }
-  const h1 = Math.abs(hash) % 360;
-  const h2 = (h1 + 50) % 360;
-  return `linear-gradient(135deg, hsl(${h1}, 45%, 22%) 0%, hsl(${h2}, 60%, 14%) 100%)`;
+  const opacity = 0.04 + (Math.abs(hash) % 5) * 0.01;
+  return `radial-gradient(ellipse at top right, rgba(255, 255, 255, ${opacity}) 0%, rgba(20, 20, 24, 0) 70%)`;
 }
 
 function getInitials(name: string) {
@@ -476,9 +475,9 @@ function Dashboard() {
                       className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <div className="relative h-32 w-full overflow-hidden border-b border-white/[0.08] bg-[#0c0d14]/90 p-3 flex flex-col justify-between select-none">
-                        {/* Ambient subtle glow seeded from project id */}
+                        {/* Ambient subtle monochrome glow seeded from project id */}
                         <div
-                          className="absolute -top-12 -right-12 h-36 w-36 rounded-full blur-3xl opacity-20"
+                          className="absolute -top-12 -right-12 h-36 w-36 rounded-full blur-3xl opacity-30 pointer-events-none"
                           style={{ background: getProjectGradient(p.id) }}
                         />
 
@@ -489,29 +488,29 @@ function Dashboard() {
                             <div className="h-1.5 w-1.5 rounded-full bg-white/20" />
                             <div className="h-1.5 w-1.5 rounded-full bg-white/20" />
                           </div>
-                          <div className="flex items-center gap-1 rounded-full bg-white/[0.04] border border-white/5 px-2 py-0.5 text-[9px] font-mono text-muted-foreground/70">
+                          <div className="flex items-center gap-1 rounded-full bg-white/[0.05] border border-white/10 px-2 py-0.5 text-[9px] font-mono text-zinc-300">
                             <Globe className="h-2.5 w-2.5 text-zinc-400" />
-                            <span>{pubSlug ? `${pubSlug}.dev` : "preview"}</span>
+                            <span>{pubSlug ? `/p/${pubSlug}` : "draft"}</span>
                           </div>
                         </div>
 
-                        {/* Abstract website preview wireframe */}
-                        <div className="mt-2 flex-1 rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between z-10">
-                          <div className="flex items-center justify-between">
-                            <div className="h-1.5 w-12 rounded bg-white/25" />
-                            <div className="flex gap-1">
-                              <div className="h-1.5 w-4 rounded bg-white/10" />
-                              <div className="h-1.5 w-4 rounded bg-white/10" />
+                        {/* Informative project identity preview */}
+                        <div className="flex items-center gap-2.5 z-10 my-auto rounded-lg border border-white/[0.06] bg-white/[0.02] p-2.5">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/[0.06] text-xs font-bold tracking-wider text-white">
+                            {getInitials(p.name)}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate text-xs font-medium text-white">{p.name}</div>
+                            <div className="mt-0.5 truncate text-[10px] text-zinc-400">
+                              {p.description || (fileCount > 0 ? `${fileCount} source ${fileCount === 1 ? "file" : "files"}` : "Workspace initialized")}
                             </div>
                           </div>
-                          <div className="space-y-1 my-auto">
-                            <div className="h-2.5 w-24 rounded bg-white/35" />
-                            <div className="h-1.5 w-36 rounded bg-white/15" />
-                          </div>
-                          <div className="flex gap-1.5 pt-1">
-                            <div className="h-2 w-7 rounded bg-white/20" />
-                            <div className="h-2 w-9 rounded bg-white/10" />
-                          </div>
+                        </div>
+
+                        {/* Bottom preview meta */}
+                        <div className="flex items-center justify-between text-[10px] text-zinc-500 z-10 px-0.5">
+                          <span>{fileCount} {fileCount === 1 ? "file" : "files"}</span>
+                          <span>{pubSlug ? "Published" : "Local only"}</span>
                         </div>
                       </div>
                     </Link>

@@ -106,9 +106,12 @@ After the last tag, write a 2-3 sentence summary of what was built or changed.`;
 export type ProviderId = PublicModelId;
 export type ModelProvider = ProviderId;
 
-export const MODELS: Record<PublicModelId, { label: string }> = {
-  "build-max": { label: "ZarGPT Build Max" },
-  "build-mini": { label: "ZarGPT Build Mini" },
+export const MODELS: Record<
+  PublicModelId,
+  { label: string; model: string; maxOutputTokens: number }
+> = {
+  "build-max": { label: "ZarGPT Build Max", model: "mercury-2.5", maxOutputTokens: 8192 },
+  "build-mini": { label: "ZarGPT Build Mini", model: "mercury-2", maxOutputTokens: 4096 },
 };
 
 export const DEFAULT_PROVIDER: ProviderId = "build-max";
@@ -332,10 +335,11 @@ export function streamModel(
       return { role: m.role, content: parts.length > 0 ? parts : m.content };
     });
 
+    const modelConfig = MODELS[normalizedProvider] || MODELS["build-max"];
     const requestBody = {
       messages: formattedMessages,
       model: upstreamModelName,
-      max_tokens: 64000,
+      max_tokens: modelConfig.maxOutputTokens || 8192,
       temperature: 0.3,
       reasoning_effort: "low",
       stream: true,

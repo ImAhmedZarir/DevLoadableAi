@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+import type { ModelProvider } from "./agent-provider.server";
 
 type AgentOut = {
   message: string;
@@ -67,45 +68,46 @@ export const sendAgentMessage = createServerFn({ method: "POST" })
       systemPrompt += `\n\n${skillsPrompt}`;
     }
 
-    const providerId = DEFAULT_PROVIDER;
-    const model = MODELS[DEFAULT_PROVIDER].model;
-    const unlimitedRequests = (settingsMap.get("agent_unlimited_requests") ?? "true") === "true";
+    const requestedProvider = data.provider;
+    const providerId: ModelProvider =
+      requestedProvider === "build-mini" || requestedProvider === "build-max"
+        ? requestedProvider
+        : DEFAULT_PROVIDER;
+    const model = MODELS[providerId].model;
 
-    // Atomic quota check & consume
-    const { data: allowed, error: quotaErr } = await supabase.rpc("consume_daily_message", {
-      _user: userId,
-      _limit: 5,
-      _unlimited: unlimitedRequests,
+    // Unified fail-closed daily quota check
+    const { checkAndConsumeMessageQuota } = await import("./quota-policy.server");
+    await checkAndConsumeMessageQuota({
+      supabase,
+      userId,
+      isAutofix: false,
+      idempotencyKey: `${data.projectId}:${data.prompt}`,
     });
-    if (quotaErr) {
-      console.warn("consume_daily_message error, continuing:", quotaErr);
-    } else if (allowed === false) {
-      throw new Error(
-        "Daily limit reached. Ask an admin to raise the limit or try again tomorrow.",
-      );
-    }
 
     // Verify project ownership
     const { data: proj } = await supabase
       .from("projects")
       .select("id,name,agent_notes")
       .eq("id", data.projectId)
+      .eq("user_id", userId)
       .maybeSingle();
-    if (!proj) throw new Error("Project not found");
+    if (!proj) throw new Error("Project not found or unauthorized");
 
-    // Load history + current files
-    const [{ data: history }, { data: files }] = await Promise.all([
+    // Load latest 20 messages (descending, then reversed for chronological context) + current files
+    const [{ data: historyRaw }, { data: files }] = await Promise.all([
       supabase
         .from("messages")
         .select("role,content")
         .eq("project_id", data.projectId)
-        .order("created_at")
+        .order("created_at", { ascending: false })
         .limit(20),
       supabase
         .from("project_files")
         .select("path,content,is_upload")
         .eq("project_id", data.projectId),
     ]);
+
+    const history = (historyRaw ?? []).slice().reverse();
 
     const filesSummary =
       (files ?? [])
@@ -578,12 +580,28 @@ export const uploadProjectFile = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const path = data.path.replace(/^\/+/, "");
+
+    // Verify project ownership
+    const { data: proj } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("id", data.projectId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!proj) throw new Error("Project not found or unauthorized");
+
+    const { validateFilePath, normalizeFilePath } = await import("./agent-parser.server");
+    const cleanPath = normalizeFilePath(data.path.replace(/^\/+/, ""));
+    const val = validateFilePath(cleanPath, data.content);
+    if (!val.valid) {
+      throw new Error(`Invalid file upload: ${val.error || "Blocked by path sandbox"}`);
+    }
+
     const { error } = await supabase.from("project_files").upsert(
       {
         project_id: data.projectId,
         user_id: userId,
-        path,
+        path: cleanPath,
         content: data.content,
         is_upload: true,
         updated_at: new Date().toISOString(),
@@ -595,9 +613,9 @@ export const uploadProjectFile = createServerFn({ method: "POST" })
       project_id: data.projectId,
       user_id: userId,
       kind: "info",
-      label: `Uploaded ${path}`,
+      label: `Uploaded ${cleanPath}`,
     });
-    return { ok: true };
+    return { ok: true, path: cleanPath };
   });
 
 export const bulkUploadProjectFiles = createServerFn({ method: "POST" })
@@ -614,54 +632,111 @@ export const bulkUploadProjectFiles = createServerFn({ method: "POST" })
             }),
           )
           .min(1)
-          .max(1000),
+          .max(500),
       })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const records = data.files.map((f) => ({
-      project_id: data.projectId,
-      user_id: userId,
-      path: f.path.replace(/^\/+/, ""),
-      content: f.content,
-      is_upload: true,
-      updated_at: new Date().toISOString(),
-    }));
+
+    // Verify project ownership
+    const { data: proj } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("id", data.projectId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!proj) throw new Error("Project not found or unauthorized");
+
+    const { validateFilePath, normalizeFilePath } = await import("./agent-parser.server");
+
+    // Aggregate size check: max 25MB total across bulk upload batch
+    let totalBatchBytes = 0;
+    const MAX_BATCH_BYTES = 25_000_000;
+
+    const validatedRecords: Array<{
+      project_id: string;
+      user_id: string;
+      path: string;
+      content: string;
+      is_upload: boolean;
+      updated_at: string;
+    }> = [];
+
+    for (const f of data.files) {
+      totalBatchBytes += f.content.length;
+      if (totalBatchBytes > MAX_BATCH_BYTES) {
+        throw new Error("Bulk archive upload exceeds aggregate limit (25MB).");
+      }
+      const cleanPath = normalizeFilePath(f.path.replace(/^\/+/, ""));
+      const val = validateFilePath(cleanPath, f.content);
+      if (val.valid) {
+        validatedRecords.push({
+          project_id: data.projectId,
+          user_id: userId,
+          path: cleanPath,
+          content: f.content,
+          is_upload: true,
+          updated_at: new Date().toISOString(),
+        });
+      }
+    }
+
+    if (validatedRecords.length === 0) {
+      throw new Error("No safe files found in upload batch.");
+    }
 
     const { error } = await supabase
       .from("project_files")
-      .upsert(records, { onConflict: "project_id,path" });
+      .upsert(validatedRecords, { onConflict: "project_id,path" });
     if (error) throw new Error(error.message);
 
     await supabase.from("work_logs").insert({
       project_id: data.projectId,
       user_id: userId,
       kind: "info",
-      label: `Imported ${records.length} files from archive`,
+      label: `Imported ${validatedRecords.length} files from archive`,
     });
-    return { ok: true, count: records.length };
+    return { ok: true, count: validatedRecords.length };
   });
 
 export const downloadProjectZip = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ projectId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
+
+    // Verify project ownership
+    const { data: proj } = await supabase
+      .from("projects")
+      .select("id,name")
+      .eq("id", data.projectId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!proj) throw new Error("Project not found or unauthorized");
+
     const { data: files, error } = await supabase
       .from("project_files")
       .select("path,content")
       .eq("project_id", data.projectId);
     if (error) throw new Error(error.message);
+
     const JSZip = (await import("jszip")).default;
     const zip = new JSZip();
     for (const f of files ?? []) zip.file(f.path, f.content);
-    const buf = await zip.generateAsync({ type: "uint8array" });
-    // Return base64 for transport through server-fn JSON
-    let bin = "";
-    for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
-    const b64 = btoa(bin);
-    return { base64: b64, filename: `project-${data.projectId}.zip` };
+    const buf = await zip.generateAsync({ type: "nodebuffer" });
+
+    // Efficient base64 stringification via Node Buffer without string-concatenation memory explosion
+    const b64 = Buffer.isBuffer(buf)
+      ? buf.toString("base64")
+      : Buffer.from(buf).toString("base64");
+
+    const safeProjName = (proj.name || `project-${data.projectId}`)
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    return { base64: b64, filename: `${safeProjName || "project"}.zip` };
   });
 
 export const saveProjectFile = createServerFn({ method: "POST" })

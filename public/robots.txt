@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
-Allow: /p/
 Disallow: /admin
 Disallow: /api/
+Disallow: /auth
+Disallow: /p/
 
-Sitemap: https://devloadable.pro.bd/sitemap.xml
+Sitemap: https://devloadable.ai.studio/sitemap.xml

@@ -112,6 +112,7 @@ ${getStorageShimScript()}
             "Content-Security-Policy":
               "sandbox allow-scripts allow-forms allow-popups allow-modals",
             "X-Content-Type-Options": "nosniff",
+            "X-Robots-Tag": "noindex, nofollow",
             "Access-Control-Allow-Origin": "*",
           },
         });
