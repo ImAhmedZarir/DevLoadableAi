@@ -1,0 +1,5 @@
+{
+  "always": ["frontend-design", "design-system"],
+  "optional": ["brand-guidelines", "canvas-design", "algorithmic-art", "mcp-builder"],
+  "note": "Only 'always' skills are injected on every build. Others are injected when the user prompt matches their keywords. The remaining skills (docx, pdf, xlsx, browser, shopping, etc.) are not relevant to a web builder and must NOT be loaded."
+}

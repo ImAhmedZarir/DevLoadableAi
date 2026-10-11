@@ -1,0 +1,6 @@
+{
+  "name": "DevLoadable",
+  "description": "Next-gen full-stack AI web app builder. Part of ZarGPT. Build, iterate, preview and publish production-ready applications in seconds with ZarGPT Build Max & Mini.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
