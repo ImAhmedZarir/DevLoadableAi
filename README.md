@@ -195,8 +195,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Built with inspiration from:
 - [Lovable](https://lovable.dev)
-- [Bolt.new](https://aistudio.google.com)
-- [Emergent](https://claude.ai)
+- [Google Ai Studio](https://aistudio.google.com)
+- [Claude](https://claude.ai)
 
 ---
 
