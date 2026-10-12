@@ -1,79 +1,205 @@
-# Remix of CodeGen Studio
+# DevLoadable
 
-build a ai coder with lovable ai and cloud system and after building user will be able to publish there website with personal links after main link
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-blue.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 
-app name:ZarGPT DevLoadable
+**DevLoadable** is an open-source, production-grade AI-powered web application builder. It enables users to describe their application ideas in natural language and generates complete, deployable code with real-time preview, chat-based iteration, and one-click publishing.
 
-App design:
+Inspired by tools like Lovable, Bolt.new, and Emergent, DevLoadable provides a fully customizable alternative that you can self-host and extend.
 
-complete same as https://lovable.dev/, bolt.new, emergent.sh,https://base44.com/
+---
 
-add auth and google login
+## Features
 
-use groq model llama-3.1-8b-instant
+- **Natural Language Code Generation** - Describe your app, and DevLoadable generates production-ready code
+- **Real-time Preview** - See changes instantly in an embedded browser preview
+- **Chat-based Iteration** - Refine your application through conversation with the AI agent
+- **Multi-stack Support** - Works with TypeScript, React, Vue, Svelte, Python, PHP, Go, Rust, and more
+- **Custom API Integration** - Support for multiple LLM providers (Groq, Gemini, OpenRouter, DeepSeek, etc.)
+- **Authentication & User Management** - Built-in Supabase authentication with admin panel
+- **File Upload** - Upload reference files and designs to guide code generation
+- **Export & Publish** - Download generated code as ZIP or publish with custom links
 
-create a admin panel where user see users and add and remove them
+---
 
-can add apis there of google,gemini,openrouter,deepseek,grok,etc
+## Tech Stack
 
-make the app as same as lovable and complete same as lovable
+| Component | Technology |
+|-----------|------------|
+| Framework | [TanStack Start](https://tanstack.com/start) |
+| UI | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
+| Styling | [Tailwind CSS](https://tailwindcss.com/) |
+| Authentication | [Supabase](https://supabase.com/) |
+| AI Engine | Custom LLM interface (supports multiple providers) |
+| Build | [Vite](https://vitejs.dev/) + [Nitro](https://nitro.unjs.io/) |
 
-i gave the main page
+---
 
-you keep finding and build all the pages and etc needed
+## Prerequisites
 
-build fully pdocuntion grade
+- **Node.js** 20 or higher
+- **npm** or **pnpm**
+- **Supabase** account (for authentication and database)
 
-use groq model llama-3.1-8b-instant Api is "@secret:GROQ_API_KEY "
+---
 
-i'm giving example image to show how the website has to be.
+## Installation
 
-website ta lovable er moto hobe
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/devloadable.git
+cd devloadable
 
-ekpashe chat option thakbe and other pashe preview and user chailei chat theke ask kore kore change kore nite parbe
+# Install dependencies
+npm install
 
-every user daily 5 ta msg pathate parbe
+# Set up environment variables
+cp .env.example .env
+```
 
-after building user will be able to publish this with custom /link.
+---
 
-build the builder like the image i uploaded
+## Environment Configuration
 
-building log will be saved
+Create a `.env` file in the root directory:
 
-user will be able to downlod full code in zip format
+```env
+# Supabase Configuration
+SUPABASE_URL=your_supabase_url
+SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
-it has to build as agent not chatbot.
+# AI Engine Configuration
+INCEPTION_API_KEY=your_api_key
 
-agent will build perfectly everysite
+# Key Encryption (for storing API keys securely)
+KEY_ENCRYPTION_SECRET=your_random_32_character_secret
+```
 
-user will be able to upload file in root section by asking ai
+### Optional: Multiple AI Providers
 
-add upload button.
+To use additional LLM providers:
 
-One task at a time korbe and code Boro hole obhabe korbe.
-multiple page banate parbe in site and code publish Korte parbe with security and error check.
+```env
+GROQ_API_KEY=your_groq_key
+GEMINI_API_KEY=your_gemini_key
+OPENROUTER_API_KEY=your_openrouter_key
+```
 
-work logs gulo uploaded image as examples er moto real time actual show korbe and app er ui hobe masterpiece.
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://zargpt-devloadable.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/84e9fdbc-f278-490f-9ee0-2bd06c462274).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+---
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+```bash
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Start preview server
+npm run preview
+
+# Run type checking
+npm run typecheck
+
+# Run linting
+npm run lint
 ```
+
+---
+
+## Project Structure
+
+```
+devloadable/
+├── src/
+│   ├── components/          # React components
+│   │   ├── brand/          # Branding components
+│   │   ├── builder/        # Builder UI components
+│   │   └── ui/             # Shared UI components
+│   ├── integrations/
+│   │   └── supabase/       # Supabase client & auth
+│   ├── lib/
+│   │   ├── agent-parser.server.ts    # Agent response parser
+│   │   ├── agent-provider.server.ts  # Model provider interface
+│   │   └── engine.server.ts          # LLM engine configuration
+│   └── routes/             # TanStack Router routes
+├── public/                  # Static assets
+├── .env.example             # Environment template
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
+
+---
+
+## Usage
+
+### 1. Start a New Project
+
+After authentication, use the chat panel to describe what you want to build:
+
+> "Create a portfolio website with a dark theme, project showcase section, and contact form"
+
+### 2. Iterate Through Chat
+
+Refine your application through conversation:
+
+> "Add a testimonials section with three sample reviews"
+> "Change the color scheme to purple"
+> "Export the code so I can deploy it locally"
+
+### 3. Upload Reference Files
+
+Attach design mockups, existing code, or documentation to guide the AI's output.
+
+### 4. Publish or Export
+
+- **Publish**: Deploy with a custom subdomain
+- **Export**: Download the complete codebase as a ZIP file
+
+---
+
+## Features Roadmap
+
+- [ ] Code generation with multiple LLM providers
+- [ ] File upload for reference materials
+- [ ] Custom API key management
+- [ ] Admin panel for user management
+- [ ] Export to ZIP
+- [ ] Custom domain publishing
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Credits
+
+Built with inspiration from:
+- [Lovable](https://lovable.dev)
+- [Bolt.new](https://aistudio.google.com)
+- [Emergent](https://claude.ai)
+
+---
+
+## Support
+
+For issues, questions, or feature requests, please open a GitHub Issue.
