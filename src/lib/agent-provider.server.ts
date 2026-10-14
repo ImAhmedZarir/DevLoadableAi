@@ -346,7 +346,12 @@ export function streamModel(
     };
 
     let attempt = 0;
-    const maxAttempts = Math.min(Math.max(getKeyCount(), 3), 6);
+    const maxAttempts = Math.min(Math.max(getKeyCount() + 2, 4), 6);
+    const backoffMs = (n: number, retryAfterSec = 0) => {
+      if (retryAfterSec > 0) return Math.min(retryAfterSec, 15) * 1000;
+      const base = getKeyCount() > 1 ? 600 : 2000;
+      return Math.min(base * 2 ** (n - 1), 10_000) + Math.floor(Math.random() * 500);
+    };
 
     while (attempt < maxAttempts) {
       attempt++;
@@ -376,21 +381,31 @@ export function streamModel(
 
         if (!res.ok) {
           const errStatus = res.status;
-          markKeyCooldown(activeKey, 60);
+          const retryAfterSec = Number(res.headers.get("retry-after")) || 0;
+          markKeyCooldown(
+            activeKey,
+            errStatus === 429 ? Math.min(Math.max(retryAfterSec, 15), 60) : 60,
+          );
 
           if (
             (errStatus === 401 || errStatus === 429 || errStatus >= 500) &&
             attempt < maxAttempts
           ) {
-            // cooldown and retry with next key
-            await new Promise((r) => setTimeout(r, 1000));
+            // cooldown this key, back off, then retry (next healthy key if any)
+            try {
+              await res.body?.cancel();
+            } catch {
+              // ignore
+            }
+            await new Promise((r) => setTimeout(r, backoffMs(attempt, retryAfterSec)));
             continue;
           }
 
           const rawText = await res.text();
           let userFriendlyMessage = "Engine temporarily busy. Please retry in a few moments.";
           if (errStatus === 429) {
-            userFriendlyMessage = "Rate limit reached on AI engine. Retrying...";
+            userFriendlyMessage =
+              "AI engine is busy (rate limit). Please wait a few seconds and press retry.";
           } else if (errStatus === 401) {
             userFriendlyMessage =
               "AI engine authentication error. Please verify your INCEPTION_API_KEY.";
