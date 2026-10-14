@@ -1,4 +1,7 @@
-export const CANONICAL_BASE_URL = "https://devloadable.ai.studio";
+export const CANONICAL_BASE_URL =
+  (typeof process !== "undefined" && process.env?.SITE_ORIGIN) ||
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_SITE_ORIGIN) ||
+  "https://devloadable.ai.studio";
 
 export function pageMeta(
   title: string,
@@ -9,9 +12,7 @@ export function pageMeta(
     image?: string;
   },
 ) {
-  const fullTitle = title.includes("DevLoadable")
-    ? title
-    : `${title} — DevLoadable`;
+  const fullTitle = title.includes("DevLoadable") ? title : `${title} — DevLoadable`;
 
   const canonicalUrl = options?.path
     ? `${CANONICAL_BASE_URL}${options.path.startsWith("/") ? options.path : `/${options.path}`}`

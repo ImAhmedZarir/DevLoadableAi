@@ -72,9 +72,7 @@ describe("Quota Policy Server", () => {
         from: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
             in: vi.fn().mockResolvedValue({
-              data: [
-                { key: "daily_message_limit", value: "-50" },
-              ],
+              data: [{ key: "daily_message_limit", value: "-50" }],
             }),
           }),
         }),
@@ -306,4 +304,3 @@ describe("Quota Policy Server", () => {
     });
   });
 });
-

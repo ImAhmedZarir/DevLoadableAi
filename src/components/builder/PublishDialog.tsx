@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Globe, Check, Copy, ExternalLink, AlertCircle, Loader2, Trash2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { publishProject, unpublishProject, checkSlugAvailability } from "@/lib/agent.functions";
+import { CANONICAL_BASE_URL } from "@/lib/page-meta";
 
 interface PublishDialogProps {
   open: boolean;
@@ -161,8 +162,7 @@ export function PublishDialog({
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const origin =
-    typeof window !== "undefined" ? window.location.origin : "https://app.devloadable.com";
+  const origin = typeof window !== "undefined" ? window.location.origin : CANONICAL_BASE_URL;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -177,7 +177,7 @@ export function PublishDialog({
             </DialogTitle>
           </div>
           <DialogDescription className="text-xs text-muted-foreground">
-            Share your website with a public link hosted instantly on ZarGPT DevLoadable.
+            Share your website with a public link hosted instantly on DevLoadable.
           </DialogDescription>
         </DialogHeader>
 
@@ -216,10 +216,10 @@ export function PublishDialog({
                 htmlFor="badge-toggle"
                 className="text-xs font-medium text-foreground cursor-pointer"
               >
-                Show &quot;Built with ZarGPT DevLoadable&quot; badge
+                Show &quot;Built with DevLoadable&quot; badge
               </Label>
               <p className="text-[11px] text-muted-foreground">
-                Displays a small pill linking to ZarGPT AI in the bottom right corner.
+                Displays a small pill linking to DevLoadable in the bottom right corner.
               </p>
             </div>
             <Switch

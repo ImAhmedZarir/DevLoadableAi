@@ -36,8 +36,8 @@ import { generateProjectNameFromIdea } from "@/lib/project-naming";
 export const Route = createFileRoute("/")({
   head: () =>
     pageMeta(
-      "DevLoadable — Next-Gen AI Fullstack App Builder | Part of ZarGPT",
-      "Build full-stack web applications in seconds with DevLoadable by ZarGPT. Powered by ZarGPT Build Max & Mini. Real-time preview, production-ready code, and one-click deployment.",
+      "DevLoadable — Next-Gen AI Fullstack App Builder",
+      "Build full-stack web applications in seconds with DevLoadable. Powered by Build Max & Build Mini. Real-time preview, production-ready code, and one-click deployment.",
     ),
   component: Landing,
 });
@@ -71,7 +71,7 @@ const STARTER_CHIPS = [
 const COMPARISON_FEATURES = [
   {
     feature: "Model Choices",
-    devloadable: "ZarGPT Build Max (8K tokens) & Build Mini (4K tokens)",
+    devloadable: "Build Max (8K tokens) & Build Mini (4K tokens)",
     traditional: "Single fixed model",
     generic: "Manual API setup",
   },
@@ -134,7 +134,9 @@ function Landing() {
 
           for (const relPath of Object.keys(zip.files)) {
             if (extracted.length >= MAX_EXTRACTED_FILES) {
-              toast.warning(`Archive contains more than ${MAX_EXTRACTED_FILES} files; remainder skipped.`);
+              toast.warning(
+                `Archive contains more than ${MAX_EXTRACTED_FILES} files; remainder skipped.`,
+              );
               break;
             }
             const entry = zip.files[relPath];
@@ -386,9 +388,9 @@ function Landing() {
 
           <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
             The next-generation AI fullstack software architect. Powered by{" "}
-            <span className="text-white font-medium">ZarGPT Build Max</span> and{" "}
-            <span className="text-white font-medium">ZarGPT Build Mini</span>. Plan, write, preview,
-            and deploy production-ready web applications with zero setup.
+            <span className="text-white font-medium">Build Max</span> and{" "}
+            <span className="text-white font-medium">Build Mini</span>. Plan, write, preview, and
+            deploy production-ready web applications with zero setup.
           </p>
 
           {/* Elevated Diamond-Black Composer Box */}
@@ -406,7 +408,9 @@ function Landing() {
                       const f = item.getAsFile();
                       if (f) {
                         if (f.type.startsWith("image/") && !f.name.toLowerCase().endsWith(".svg")) {
-                          toast.error("Image pasting is disabled. Please upload code, text, or zip files.");
+                          toast.error(
+                            "Image pasting is disabled. Please upload code, text, or zip files.",
+                          );
                           continue;
                         }
                         files.push(f);
@@ -569,7 +573,7 @@ function Landing() {
                 <div className="h-12 w-12 rounded-xl bg-white/[0.04] border border-white/[0.08] grid place-items-center text-white group-hover:border-white/40 transition-colors">
                   <Cpu className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">ZarGPT Build Max & Mini</h3>
+                <h3 className="mt-5 text-lg font-semibold text-white">Build Max & Build Mini</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                   Dual model configurations tailored for complex multi-file application design,
                   structured planning, and targeted incremental code editing.
@@ -587,8 +591,8 @@ function Landing() {
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-white">Instant Real-Time Preview</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Interactive multi-device preview environment. Simulate Desktop, Tablet,
-                  and Mobile viewports with live responsive feedback and instant error diagnostics.
+                  Interactive multi-device preview environment. Simulate Desktop, Tablet, and Mobile
+                  viewports with live responsive feedback and instant error diagnostics.
                 </p>
                 <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-muted-foreground">
                   <span>Multi-device preview</span>
@@ -605,8 +609,8 @@ function Landing() {
                   Sandboxed Sharing & ZIP Export
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Publish your project to an isolated client-side route (/p/$slug) with custom slugs,
-                  or download your entire workspace as a clean ZIP archive.
+                  Publish your project to an isolated client-side route (/p/$slug) with custom
+                  slugs, or download your entire workspace as a clean ZIP archive.
                 </p>
                 <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-muted-foreground">
                   <span>Custom Slugs (/p/$slug)</span>
@@ -628,7 +632,8 @@ function Landing() {
                 How DevLoadable compares
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Engineered for transparent multi-file generation, verifiable code control, and zero friction.
+                Engineered for transparent multi-file generation, verifiable code control, and zero
+                friction.
               </p>
             </div>
 
@@ -649,10 +654,10 @@ function Landing() {
                         </span>
                       </div>
                     </th>
-                    <th className="py-4 px-6 font-medium text-muted-foreground">Traditional Builders</th>
                     <th className="py-4 px-6 font-medium text-muted-foreground">
-                      Cloud Consoles
+                      Traditional Builders
                     </th>
+                    <th className="py-4 px-6 font-medium text-muted-foreground">Cloud Consoles</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.06]">
@@ -686,19 +691,21 @@ function Landing() {
                 1,000 Messages Daily · Zero Paywalls
               </h2>
               <p className="mt-3 text-muted-foreground text-sm sm:text-base">
-                DevLoadable is completely free for all authenticated developers. We do not collect credit cards,
-                we do not charge subscriptions, and we do not have paid paywalls.
+                DevLoadable is completely free for all authenticated developers. We do not collect
+                credit cards, we do not charge subscriptions, and we do not have paid paywalls.
               </p>
             </div>
 
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="rounded-2xl border border-white/[0.08] bg-[#09090e] p-6 flex flex-col justify-between">
                 <div>
-                  <div className="text-xs uppercase font-mono tracking-wider text-zinc-400">Daily Allowance</div>
+                  <div className="text-xs uppercase font-mono tracking-wider text-zinc-400">
+                    Daily Allowance
+                  </div>
                   <div className="mt-2 text-3xl font-bold text-white">1,000 / day</div>
                   <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
-                    Every authenticated account receives 1,000 user-originated messages per day. Internal agent steps
-                    for a single accepted prompt share that prompt's count.
+                    Every authenticated account receives 1,000 user-originated messages per day.
+                    Internal agent steps for a single accepted prompt share that prompt's count.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/[0.06] text-[11px] text-zinc-400 font-mono">
@@ -708,7 +715,9 @@ function Landing() {
 
               <div className="rounded-2xl border border-white/[0.15] bg-[#0e0e14] p-6 flex flex-col justify-between shadow-xl">
                 <div>
-                  <div className="text-xs uppercase font-mono tracking-wider text-white">Reset Schedule</div>
+                  <div className="text-xs uppercase font-mono tracking-wider text-white">
+                    Reset Schedule
+                  </div>
                   <div className="mt-2 text-3xl font-bold text-white">00:00 UTC</div>
                   <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
                     Your daily message allowance resets cleanly at midnight UTC every day worldwide.
@@ -722,11 +731,13 @@ function Landing() {
 
               <div className="rounded-2xl border border-white/[0.08] bg-[#09090e] p-6 flex flex-col justify-between">
                 <div>
-                  <div className="text-xs uppercase font-mono tracking-wider text-zinc-400">Ownership</div>
+                  <div className="text-xs uppercase font-mono tracking-wider text-zinc-400">
+                    Ownership
+                  </div>
                   <div className="mt-2 text-3xl font-bold text-white">100% Yours</div>
                   <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
-                    You own all generated files, layouts, and assets completely. Download your complete codebase
-                    as a standard ZIP archive at any time with zero restrictions.
+                    You own all generated files, layouts, and assets completely. Download your
+                    complete codebase as a standard ZIP archive at any time with zero restrictions.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/[0.06] text-[11px] text-zinc-400 font-mono">
@@ -751,43 +762,58 @@ function Landing() {
 
             <div className="space-y-6">
               <div className="rounded-2xl border border-white/[0.08] bg-[#08080c] p-6">
-                <h3 className="text-base font-semibold text-white">How does the 1,000 daily message limit work?</h3>
+                <h3 className="text-base font-semibold text-white">
+                  How does the 1,000 daily message limit work?
+                </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Each authenticated user can submit up to 1,000 accepted messages per UTC calendar day.
-                  If a client retry occurs with the same prompt and idempotency key, it does not consume an extra message.
-                  Follow-up prompts and manual autofix requests count as distinct user requests.
+                  Each authenticated user can submit up to 1,000 accepted messages per UTC calendar
+                  day. If a client retry occurs with the same prompt and idempotency key, it does
+                  not consume an extra message. Follow-up prompts and manual autofix requests count
+                  as distinct user requests.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-white/[0.08] bg-[#08080c] p-6">
-                <h3 className="text-base font-semibold text-white">Is DevLoadable really completely free?</h3>
+                <h3 className="text-base font-semibold text-white">
+                  Is DevLoadable really completely free?
+                </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Yes. DevLoadable is 100% free. There are no credit-card requirements, paid plans, checkout pages,
-                  or paywalls. All core builder features, model access, and ZIP exports are included.
+                  Yes. DevLoadable is 100% free. There are no credit-card requirements, paid plans,
+                  checkout pages, or paywalls. All core builder features, model access, and ZIP
+                  exports are included.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-white/[0.08] bg-[#08080c] p-6">
-                <h3 className="text-base font-semibold text-white">Who owns the code generated by DevLoadable?</h3>
+                <h3 className="text-base font-semibold text-white">
+                  Who owns the code generated by DevLoadable?
+                </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  You own all code, files, and project assets generated in DevLoadable. You can export your entire project
-                  as a ZIP file at any time and run it locally, push to your own Git repository, or host it anywhere.
+                  You own all code, files, and project assets generated in DevLoadable. You can
+                  export your entire project as a ZIP file at any time and run it locally, push to
+                  your own Git repository, or host it anywhere.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-white/[0.08] bg-[#08080c] p-6">
-                <h3 className="text-base font-semibold text-white">How does public project publishing work?</h3>
+                <h3 className="text-base font-semibold text-white">
+                  How does public project publishing work?
+                </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Publishing creates a shareable URL at /p/your-slug. Published sites are served in an isolated client-side
-                  sandbox with Content Security Policy headers and an in-memory browser storage shim for security.
+                  Publishing creates a shareable URL at /p/your-slug. Published sites are served in
+                  an isolated client-side sandbox with Content Security Policy headers and an
+                  in-memory browser storage shim for security.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-white/[0.08] bg-[#08080c] p-6">
-                <h3 className="text-base font-semibold text-white">What technology stacks are supported?</h3>
+                <h3 className="text-base font-semibold text-white">
+                  What technology stacks are supported?
+                </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  DevLoadable generates modern client-side web applications using HTML5, CSS3, JavaScript, TypeScript, React components,
-                  and Tailwind CSS. The agent structures projects into clean modular directories.
+                  DevLoadable generates modern client-side web applications using HTML5, CSS3,
+                  JavaScript, TypeScript, React components, and Tailwind CSS. The agent structures
+                  projects into clean modular directories.
                 </p>
               </div>
             </div>
@@ -849,16 +875,10 @@ function Landing() {
               <Link to="/auth" className="hover:text-white transition-colors">
                 Sign in
               </Link>
-              <a
-                href="/privacy-policy/"
-                className="hover:text-white transition-colors"
-              >
+              <a href="/privacy-policy/" className="hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a
-                href="/term-of-service/"
-                className="hover:text-white transition-colors"
-              >
+              <a href="/term-of-service/" className="hover:text-white transition-colors">
                 Terms of Service
               </a>
               <a

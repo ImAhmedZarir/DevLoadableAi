@@ -14,5 +14,26 @@ export default defineConfig({
   },
   nitro: {
     preset: "node-server",
+    rolldownConfig: {
+      checks: {
+        moduleLevelDirective: false,
+      },
+    },
+    rollupConfig: {
+      onwarn(warning: any, warn: any) {
+        if (warning?.code === "MODULE_LEVEL_DIRECTIVE") return;
+        warn(warning);
+      },
+    },
+  } as any,
+  vite: {
+    build: {
+      rollupOptions: {
+        onwarn(warning: any, warn: any) {
+          if (warning?.code === "MODULE_LEVEL_DIRECTIVE") return;
+          warn(warning);
+        },
+      },
+    },
   },
 });

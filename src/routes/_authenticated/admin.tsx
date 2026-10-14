@@ -59,7 +59,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   head: () =>
     pageMeta(
       "Admin panel",
-      "Manage ZarGPT DevLoadable users, agent models, skills, limits, and build runs.",
+      "Manage DevLoadable users, agent models, skills, limits, and build runs.",
     ),
 });
 
@@ -92,11 +92,11 @@ type BuildRunItem = {
 
 const MODEL_DESCRIPTIONS: Record<string, { name: string; desc: string }> = {
   "build-max": {
-    name: "ZarGPT Build Max",
+    name: "Build Max",
     desc: "Default flagship polyglot model. Highest reasoning intelligence, complete multi-step file generation, and deep architectural planning.",
   },
   "build-mini": {
-    name: "ZarGPT Build Mini",
+    name: "Build Mini",
     desc: "High-speed agent model for rapid iterations, lightweight styling changes, and real-time prototypes.",
   },
 };
@@ -587,8 +587,8 @@ function Admin() {
                   }}
                   className="w-full rounded-lg border border-border/80 bg-secondary/50 px-3 py-2 text-xs text-foreground outline-none focus:border-ring"
                 >
-                  <option value="build-max">ZarGPT Build Max (Default flagship)</option>
-                  <option value="build-mini">ZarGPT Build Mini (High-speed build)</option>
+                  <option value="build-max">Build Max (Default flagship)</option>
+                  <option value="build-mini">Build Mini (High-speed build)</option>
                 </select>
               </div>
 
@@ -787,7 +787,8 @@ function Admin() {
                   Daily Message Limit Per User
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Applied when unlimited requests is turned off. Evaluates user messages sent per UTC calendar day (resets daily at 00:00:00 UTC). Default is 1,000.
+                  Applied when unlimited requests is turned off. Evaluates user messages sent per
+                  UTC calendar day (resets daily at 00:00:00 UTC). Default is 1,000.
                 </p>
 
                 <div className="mt-3 flex items-center gap-3">

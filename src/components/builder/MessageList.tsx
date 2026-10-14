@@ -344,8 +344,7 @@ export function MessageList({
         const isPlan = m.kind === "plan";
         const options: string[] =
           isQuestion && Array.isArray(m.meta?.options) ? m.meta.options : [];
-        const planRunId =
-          isPlan && typeof m.meta?.runId === "string" ? m.meta.runId : null;
+        const planRunId = isPlan && typeof m.meta?.runId === "string" ? m.meta.runId : null;
 
         // User message: right-aligned bubble, bg-secondary, rounded-2xl rounded-br-md, max-w 85%
         if (isUser) {
@@ -602,7 +601,12 @@ export function MessageList({
           const handleAnswerQuestion = (answer: string) => {
             // Find prior user prompt in message history that led to this question
             const priorUserMsg = [...messages]
-              .filter((msg) => msg.role === "user" && msg.content && !msg.content.startsWith("Clarification choice:"))
+              .filter(
+                (msg) =>
+                  msg.role === "user" &&
+                  msg.content &&
+                  !msg.content.startsWith("Clarification choice:"),
+              )
               .pop();
 
             const priorContext = priorUserMsg?.content
@@ -692,7 +696,7 @@ export function MessageList({
               {renderMarkdownRich(m.content)}
               <div className="flex items-center gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <MessageCopyButton content={m.content} />
-                <span className="text-[11px] text-muted-foreground/50">ZarGPT Build V1</span>
+                <span className="text-[11px] text-muted-foreground/50">DevLoadable</span>
               </div>
             </div>
           </div>

@@ -174,8 +174,8 @@ describe("buildPreviewDoc", () => {
       { path: "data/config.json", content: '{"theme":"dark"}' },
     ];
     const result = buildPreviewDoc({ files, page: "index.html" });
-    expect(result).toContain('api.js');
-    expect(result).toContain('data/config.json');
-    expect(result).toContain('origFetch');
+    expect(result).toContain("api.js");
+    expect(result).toContain("data/config.json");
+    expect(result).toContain("origFetch");
   });
 });

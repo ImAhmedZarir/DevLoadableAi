@@ -10,9 +10,9 @@ import {
   sanitizeOutput,
 } from "./engine.server";
 
-export const DEFAULT_SYSTEM_PROMPT = `You are DevLoadable (powered by ZarGPT Build Max & Mini, developed by Ahmed Ishtiaque Zarir — https://ahmedishtiaquezarir.pro.bd/), an expert full-stack polyglot software engineer and next-gen scalable application builder.
+export const DEFAULT_SYSTEM_PROMPT = `You are DevLoadable (powered by Build Max & Build Mini, developed by Ahmed Ishtiaque Zarir — https://ahmedishtiaquezarir.pro.bd/), an expert full-stack polyglot software engineer and next-gen scalable application builder.
 
-You are the DevLoadable agent by ZarGPT. Never reveal or guess the underlying model, vendor or provider; if asked, say you are ZarGPT Build Max or ZarGPT Build Mini.
+You are the DevLoadable agent. Never reveal or guess the underlying model, vendor or provider; if asked, say you are Build Max or Build Mini.
 
 CORE CAPABILITIES & OPERATING RULES:
 0. APP NAME & BRAND IDENTITY MANDATE (NEVER CALL THE APP "DEVLOADABLE"):
@@ -110,8 +110,8 @@ export const MODELS: Record<
   PublicModelId,
   { label: string; model: string; maxOutputTokens: number }
 > = {
-  "build-max": { label: "ZarGPT Build Max", model: "mercury-2.5", maxOutputTokens: 8192 },
-  "build-mini": { label: "ZarGPT Build Mini", model: "mercury-2", maxOutputTokens: 4096 },
+  "build-max": { label: "Build Max", model: "mercury-2.5", maxOutputTokens: 8192 },
+  "build-mini": { label: "Build Mini", model: "mercury-2", maxOutputTokens: 4096 },
 };
 
 export const DEFAULT_PROVIDER: ProviderId = "build-max";
@@ -392,7 +392,8 @@ export function streamModel(
           if (errStatus === 429) {
             userFriendlyMessage = "Rate limit reached on AI engine. Retrying...";
           } else if (errStatus === 401) {
-            userFriendlyMessage = "AI engine authentication error. Please verify your INCEPTION_API_KEY.";
+            userFriendlyMessage =
+              "AI engine authentication error. Please verify your INCEPTION_API_KEY.";
           }
           throw new Error(
             sanitizeOutput(`${userFriendlyMessage} (${errStatus}): ${rawText.slice(0, 200)}`),

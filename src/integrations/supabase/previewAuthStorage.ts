@@ -1,13 +1,11 @@
+import { CANONICAL_BASE_URL } from "@/lib/page-meta";
+
 // On a DevLoadable preview surface, broker the auth session to the editor over
 // postMessage so the project's preview surfaces share one login; else localStorage.
 export function brokeredPreviewStorage() {
   if (typeof window === "undefined") return undefined;
   const host = location.hostname;
-  const PREVIEW_ZONES = [
-    "devloadable.pro.bd",
-    "devloadable.internal",
-    "preview.devloadable.com",
-  ];
+  const PREVIEW_ZONES = ["devloadable.ai.studio", "devloadable.internal"];
   const onPreviewZone = PREVIEW_ZONES.some((z) => host === z || host.endsWith("." + z));
   // Read the id only from non-user-controlled host positions, so a user-named
   // preview--<name> host can't smuggle another project's id.
@@ -24,8 +22,8 @@ export function brokeredPreviewStorage() {
   // session token can never reach an untrusted embedder.
   const dev = host.endsWith(".devloadable.internal") || host === "localhost";
   const EDITOR = dev
-    ? /^https:\/\/([a-z0-9-]+\.)*(devloadable\.pro\.bd|devloadable\.com)$|^http:\/\/localhost:3000$/
-    : /^https:\/\/([a-z0-9-]+\.)*(devloadable\.pro\.bd|devloadable\.com)$/;
+    ? /^https:\/\/([a-z0-9-]+\.)*devloadable\.ai\.studio$|^http:\/\/localhost:3000$/
+    : /^https:\/\/([a-z0-9-]+\.)*devloadable\.ai\.studio$/;
   const ancestor =
     (location.ancestorOrigins && location.ancestorOrigins[0]) ||
     (document.referrer ? new URL(document.referrer).origin : "");
@@ -33,8 +31,8 @@ export function brokeredPreviewStorage() {
     ancestor && EDITOR.test(ancestor)
       ? [ancestor]
       : dev
-        ? ["https://devloadable.pro.bd", "http://localhost:3000"]
-        : ["https://devloadable.pro.bd"];
+        ? [CANONICAL_BASE_URL, "http://localhost:3000"]
+        : [CANONICAL_BASE_URL];
   const RESULT = "devloadable-preview-auth:result";
   const TIMEOUT = 2000;
   const newId = () => Math.random().toString(36).slice(2) + Date.now().toString(36);

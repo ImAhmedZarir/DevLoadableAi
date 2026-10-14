@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/builder/$projectId")({
   head: () =>
     pageMeta(
       "Website editor",
-      "Build and refine your DevLoadable project with live preview and code. Part of ZarGPT.",
+      "Build and refine your DevLoadable project with live preview and code.",
     ),
 });
 
@@ -495,7 +495,9 @@ function Builder() {
                       setFiles((prev) => prev.filter((f) => f.path !== evt.path));
                       setPreviewKey((k) => k + 1);
                     } else if (evt.type === "project_renamed" && evt.name) {
-                      setProject((prev) => (prev ? { ...prev, name: evt.name } : { name: evt.name }));
+                      setProject((prev) =>
+                        prev ? { ...prev, name: evt.name } : { name: evt.name },
+                      );
                       toast.info(`Project named: ${evt.name}`);
                     } else if (evt.type === "waiting") {
                       stepWaiting = true;
@@ -601,9 +603,7 @@ function Builder() {
   async function handleSaveFile(path: string, content: string) {
     try {
       await saveFileFn({ data: { projectId, path, content } });
-      setFiles((prev) =>
-        prev.map((f) => (f.path === path ? { ...f, content } : f)),
-      );
+      setFiles((prev) => prev.map((f) => (f.path === path ? { ...f, content } : f)));
       setRecentlyUpdated((prev) => new Map(prev).set(path, "edited"));
       setPreviewKey((k) => k + 1);
       toast.success(`Saved ${path}`);
@@ -735,7 +735,19 @@ function Builder() {
     // If user attached code files, auto-upload to project_files so the workspace immediately has them
     for (const f of currentAttached) {
       const ext = f.name.split(".").pop()?.toLowerCase() || "";
-      const isCode = ["html", "htm", "css", "js", "jsx", "ts", "tsx", "json", "svg", "txt", "md"].includes(ext);
+      const isCode = [
+        "html",
+        "htm",
+        "css",
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "json",
+        "svg",
+        "txt",
+        "md",
+      ].includes(ext);
       if (isCode && !f.type?.startsWith("image/")) {
         try {
           await uploadFn({ data: { projectId, path: f.name, content: f.content } });
@@ -761,18 +773,17 @@ function Builder() {
         )
         .join("\n\n");
       promptToSend = `${fileContext}\n\nUser Request: ${
-        rawText ||
-        "Please use and build upon the attached file(s) for the project."
+        rawText || "Please use and build upon the attached file(s) for the project."
       }\n\nCRITICAL INSTRUCTION: Read the attached file(s) carefully. If the user provided code, templates, or HTML/CSS/JS, USE IT AS THE FOUNDATION and adapt/improve it directly for this project!`;
     }
 
     // Detect app name from prompt or user text and persist it
     const detectedNameMatch =
       promptToSend.match(
-        /(?:app|project|website|product)\s*(?:name|title)\s*[:=\-]\s*["']?([a-zA-Z0-9_\-\s]{2,40}?)["']?(?:\.|\n|$|,)/i,
+        /(?:app|project|website|product)\s*(?:name|title)\s*[:=-]\s*["']?([a-zA-Z0-9_\s-]{2,40}?)["']?(?:\.|\n|$|,)/i,
       ) ||
-      promptToSend.match(/(?:named|called)\s*["']([a-zA-Z0-9_\-\s]{2,40})["']/i) ||
-      promptToSend.match(/(?:named|called)\s+([A-Z][a-zA-Z0-9_\-]{2,30})/i);
+      promptToSend.match(/(?:named|called)\s*["']([a-zA-Z0-9_\s-]{2,40})["']/i) ||
+      promptToSend.match(/(?:named|called)\s+([A-Z][a-zA-Z0-9_-]{2,30})/i);
 
     let targetAppName: string | null = null;
     if (detectedNameMatch && detectedNameMatch[1]) {
@@ -1233,7 +1244,9 @@ function Builder() {
 
             <ResizablePanel defaultSize="62%" minSize="45%">
               <div className="flex h-full flex-col overflow-hidden">
-                <div className={`h-full flex-col overflow-hidden ${tab === "preview" ? "flex" : "hidden"}`}>
+                <div
+                  className={`h-full flex-col overflow-hidden ${tab === "preview" ? "flex" : "hidden"}`}
+                >
                   <PreviewPane
                     projectId={projectId}
                     files={files}
@@ -1248,7 +1261,9 @@ function Builder() {
                   />
                 </div>
 
-                <div className={`h-full flex-col overflow-hidden ${tab === "code" ? "flex" : "hidden"}`}>
+                <div
+                  className={`h-full flex-col overflow-hidden ${tab === "code" ? "flex" : "hidden"}`}
+                >
                   <CodePane
                     files={files}
                     recentlyUpdated={recentlyUpdated}
@@ -1260,11 +1275,15 @@ function Builder() {
                   />
                 </div>
 
-                <div className={`h-full flex-col overflow-hidden ${tab === "logs" ? "flex" : "hidden"}`}>
+                <div
+                  className={`h-full flex-col overflow-hidden ${tab === "logs" ? "flex" : "hidden"}`}
+                >
                   <LogsPane logs={logs} />
                 </div>
 
-                <div className={`h-full flex-col overflow-hidden ${tab === "versions" ? "flex" : "hidden"}`}>
+                <div
+                  className={`h-full flex-col overflow-hidden ${tab === "versions" ? "flex" : "hidden"}`}
+                >
                   <VersionsPane projectId={projectId} isBuilding={busy} onVersionRestored={load} />
                 </div>
               </div>
@@ -1272,7 +1291,9 @@ function Builder() {
           </ResizablePanelGroup>
         ) : (
           <div className="flex h-full w-full flex-col overflow-hidden">
-            <div className={`h-full flex-col overflow-hidden ${tab === "preview" ? "flex" : "hidden"}`}>
+            <div
+              className={`h-full flex-col overflow-hidden ${tab === "preview" ? "flex" : "hidden"}`}
+            >
               <PreviewPane
                 projectId={projectId}
                 files={files}
@@ -1287,7 +1308,9 @@ function Builder() {
               />
             </div>
 
-            <div className={`h-full flex-col overflow-hidden ${tab === "code" ? "flex" : "hidden"}`}>
+            <div
+              className={`h-full flex-col overflow-hidden ${tab === "code" ? "flex" : "hidden"}`}
+            >
               <CodePane
                 files={files}
                 recentlyUpdated={recentlyUpdated}
@@ -1299,11 +1322,15 @@ function Builder() {
               />
             </div>
 
-            <div className={`h-full flex-col overflow-hidden ${tab === "logs" ? "flex" : "hidden"}`}>
+            <div
+              className={`h-full flex-col overflow-hidden ${tab === "logs" ? "flex" : "hidden"}`}
+            >
               <LogsPane logs={logs} />
             </div>
 
-            <div className={`h-full flex-col overflow-hidden ${tab === "versions" ? "flex" : "hidden"}`}>
+            <div
+              className={`h-full flex-col overflow-hidden ${tab === "versions" ? "flex" : "hidden"}`}
+            >
               <VersionsPane projectId={projectId} isBuilding={busy} onVersionRestored={load} />
             </div>
           </div>
@@ -1314,7 +1341,9 @@ function Builder() {
       <div className="flex flex-1 flex-col md:hidden overflow-hidden">
         {/* Main active view on mobile */}
         <div className="flex-1 overflow-hidden relative">
-          <div className={`h-full flex-col overflow-hidden ${mobileTab === "chat" ? "flex" : "hidden"}`}>
+          <div
+            className={`h-full flex-col overflow-hidden ${mobileTab === "chat" ? "flex" : "hidden"}`}
+          >
             <ChatPanel
               projectNotes={project?.agent_notes}
               messages={messages}
@@ -1355,7 +1384,9 @@ function Builder() {
             />
           </div>
 
-          <div className={`h-full flex-col overflow-hidden ${mobileTab === "preview" ? "flex" : "hidden"}`}>
+          <div
+            className={`h-full flex-col overflow-hidden ${mobileTab === "preview" ? "flex" : "hidden"}`}
+          >
             <PreviewPane
               projectId={projectId}
               files={files}
@@ -1370,7 +1401,9 @@ function Builder() {
             />
           </div>
 
-          <div className={`h-full flex-col overflow-hidden ${mobileTab === "code" ? "flex" : "hidden"}`}>
+          <div
+            className={`h-full flex-col overflow-hidden ${mobileTab === "code" ? "flex" : "hidden"}`}
+          >
             <CodePane
               files={files}
               recentlyUpdated={recentlyUpdated}
@@ -1382,11 +1415,15 @@ function Builder() {
             />
           </div>
 
-          <div className={`h-full flex-col overflow-hidden ${mobileTab === "logs" ? "flex" : "hidden"}`}>
+          <div
+            className={`h-full flex-col overflow-hidden ${mobileTab === "logs" ? "flex" : "hidden"}`}
+          >
             <LogsPane logs={logs} />
           </div>
 
-          <div className={`h-full flex-col overflow-hidden ${mobileTab === "versions" ? "flex" : "hidden"}`}>
+          <div
+            className={`h-full flex-col overflow-hidden ${mobileTab === "versions" ? "flex" : "hidden"}`}
+          >
             <VersionsPane projectId={projectId} isBuilding={busy} onVersionRestored={load} />
           </div>
         </div>
@@ -1400,7 +1437,9 @@ function Builder() {
             type="button"
             onClick={() => setMobileTab("chat")}
             className={`flex flex-col items-center justify-center min-h-[40px] px-3 py-1 text-[11px] font-medium transition-colors ${
-              mobileTab === "chat" ? "text-white font-semibold" : "text-zinc-500 hover:text-zinc-300"
+              mobileTab === "chat"
+                ? "text-white font-semibold"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             <MessageSquare className="h-4 w-4" />
@@ -1414,7 +1453,9 @@ function Builder() {
               setTab("preview");
             }}
             className={`flex flex-col items-center justify-center min-h-[40px] px-3 py-1 text-[11px] font-medium transition-colors ${
-              mobileTab === "preview" ? "text-white font-semibold" : "text-zinc-500 hover:text-zinc-300"
+              mobileTab === "preview"
+                ? "text-white font-semibold"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             <Eye className="h-4 w-4" />
@@ -1428,7 +1469,9 @@ function Builder() {
               setTab("code");
             }}
             className={`flex flex-col items-center justify-center min-h-[40px] px-3 py-1 text-[11px] font-medium transition-colors ${
-              mobileTab === "code" ? "text-white font-semibold" : "text-zinc-500 hover:text-zinc-300"
+              mobileTab === "code"
+                ? "text-white font-semibold"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             <CodeIcon className="h-4 w-4" />
@@ -1442,7 +1485,9 @@ function Builder() {
               setTab("logs");
             }}
             className={`relative flex flex-col items-center justify-center min-h-[40px] px-3 py-1 text-[11px] font-medium transition-colors ${
-              mobileTab === "logs" ? "text-white font-semibold" : "text-zinc-500 hover:text-zinc-300"
+              mobileTab === "logs"
+                ? "text-white font-semibold"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             <ListOrdered className="h-4 w-4" />
@@ -1459,7 +1504,9 @@ function Builder() {
               setTab("versions");
             }}
             className={`flex flex-col items-center justify-center min-h-[40px] px-3 py-1 text-[11px] font-medium transition-colors ${
-              mobileTab === "versions" ? "text-white font-semibold" : "text-zinc-500 hover:text-zinc-300"
+              mobileTab === "versions"
+                ? "text-white font-semibold"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             <History className="h-4 w-4" />

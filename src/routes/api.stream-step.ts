@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import {
-  streamModel,
-  DEFAULT_PROVIDER,
-  DEFAULT_SYSTEM_PROMPT,
-} from "@/lib/agent-provider.server";
+import { streamModel, DEFAULT_PROVIDER, DEFAULT_SYSTEM_PROMPT } from "@/lib/agent-provider.server";
 import {
   AgentStreamingParser,
   validateFilePath,
@@ -268,7 +264,8 @@ export const Route = createFileRoute("/api/stream-step")({
               let fileBytes = 0;
               const includedFiles: string[] = [];
               for (const f of (files ?? []).filter(
-                (f) => !f.is_upload || /\.(html|css|js|jsx|ts|tsx|php|json|md|txt|svg)$/i.test(f.path),
+                (f) =>
+                  !f.is_upload || /\.(html|css|js|jsx|ts|tsx|php|json|md|txt|svg)$/i.test(f.path),
               )) {
                 if (fileBytes >= FILE_BUDGET) break;
                 const remaining = FILE_BUDGET - fileBytes;
@@ -288,7 +285,9 @@ export const Route = createFileRoute("/api/stream-step")({
 
               const appNameInstruction =
                 proj?.name &&
-                !["untitled project", "devloadable", "loadable"].includes(proj.name.toLowerCase().trim())
+                !["untitled project", "devloadable", "loadable"].includes(
+                  proj.name.toLowerCase().trim(),
+                )
                   ? `APP NAME & BRAND IDENTITY: The application being built is named "${proj.name}". Every page title, logo, header text, and UI copy MUST be branded as "${proj.name}". Never call it DevLoadable.\n\n`
                   : "";
 
@@ -342,7 +341,10 @@ ${
 
                     if (isGeneric || currentProjName !== extracted) {
                       currentProjName = extracted;
-                      await db.from("projects").update({ name: extracted }).eq("id", run.project_id);
+                      await db
+                        .from("projects")
+                        .update({ name: extracted })
+                        .eq("id", run.project_id);
                       sendEvent({
                         type: "project_renamed",
                         name: extracted,
@@ -369,7 +371,10 @@ ${
                   const targetPath = normalizeFilePath(event.path);
                   const validation = validateFilePath(targetPath, event.content);
                   if (!validation.valid) {
-                    console.warn("[stream-step] Blocked unsafe file write for " + targetPath + ":", validation.error);
+                    console.warn(
+                      "[stream-step] Blocked unsafe file write for " + targetPath + ":",
+                      validation.error,
+                    );
                     await db.from("work_logs").insert({
                       project_id: run.project_id,
                       user_id: userId,
@@ -401,7 +406,10 @@ ${
                     { onConflict: "project_id,path" },
                   );
                   if (saveErr) {
-                    console.error(`[stream-step] Failed to upsert project_file ${targetPath}:`, saveErr.message);
+                    console.error(
+                      `[stream-step] Failed to upsert project_file ${targetPath}:`,
+                      saveErr.message,
+                    );
                     await db.from("work_logs").insert({
                       project_id: run.project_id,
                       user_id: userId,
@@ -428,7 +436,10 @@ ${
                   const targetPath = normalizeFilePath(event.path);
                   const validation = validateFilePath(targetPath);
                   if (!validation.valid) {
-                    console.warn("[stream-step] Blocked unsafe file edit for " + targetPath + ":", validation.error);
+                    console.warn(
+                      "[stream-step] Blocked unsafe file edit for " + targetPath + ":",
+                      validation.error,
+                    );
                     await db.from("work_logs").insert({
                       project_id: run.project_id,
                       user_id: userId,
@@ -457,58 +468,61 @@ ${
                   if (editRes.success && editRes.result !== undefined) {
                     filesMap.set(targetPath, editRes.result);
 
-                      sendEvent({
-                        type: "file_saved",
-                        path: targetPath,
-                        content: editRes.result,
-                      });
+                    sendEvent({
+                      type: "file_saved",
+                      path: targetPath,
+                      content: editRes.result,
+                    });
 
-                      const { error: editErr } = await db.from("project_files").upsert(
-                        {
-                          project_id: run.project_id,
-                          user_id: userId,
-                          path: targetPath,
-                          content: editRes.result,
-                          is_upload: false,
-                          updated_at: new Date().toISOString(),
-                        },
-                        { onConflict: "project_id,path" },
-                      );
-                      if (editErr) {
-                        console.error(`[stream-step] Failed to upsert edited project_file ${targetPath}:`, editErr.message);
-                        await db.from("work_logs").insert({
-                          project_id: run.project_id,
-                          user_id: userId,
-                          kind: "error",
-                          label: `Failed to save ${targetPath}`,
-                          detail: editErr.message,
-                          run_id: run.id,
-                          step_idx: idx,
-                        });
-                        return;
-                      }
-
-                      await db.from("work_logs").insert({
+                    const { error: editErr } = await db.from("project_files").upsert(
+                      {
                         project_id: run.project_id,
                         user_id: userId,
-                        kind: "edited",
-                        label: `Edited ${targetPath}`,
-                        run_id: run.id,
-                        step_idx: idx,
-                      });
-
-                      await checkAndApplyCodeName(targetPath, editRes.result);
-                    } else {
+                        path: targetPath,
+                        content: editRes.result,
+                        is_upload: false,
+                        updated_at: new Date().toISOString(),
+                      },
+                      { onConflict: "project_id,path" },
+                    );
+                    if (editErr) {
+                      console.error(
+                        `[stream-step] Failed to upsert edited project_file ${targetPath}:`,
+                        editErr.message,
+                      );
                       await db.from("work_logs").insert({
                         project_id: run.project_id,
                         user_id: userId,
                         kind: "error",
-                        label: `Edit failed for ${targetPath}`,
-                        detail: editRes.error || "Search block did not match",
+                        label: `Failed to save ${targetPath}`,
+                        detail: editErr.message,
                         run_id: run.id,
                         step_idx: idx,
                       });
+                      return;
                     }
+
+                    await db.from("work_logs").insert({
+                      project_id: run.project_id,
+                      user_id: userId,
+                      kind: "edited",
+                      label: `Edited ${targetPath}`,
+                      run_id: run.id,
+                      step_idx: idx,
+                    });
+
+                    await checkAndApplyCodeName(targetPath, editRes.result);
+                  } else {
+                    await db.from("work_logs").insert({
+                      project_id: run.project_id,
+                      user_id: userId,
+                      kind: "error",
+                      label: `Edit failed for ${targetPath}`,
+                      detail: editRes.error || "Search block did not match",
+                      run_id: run.id,
+                      step_idx: idx,
+                    });
+                  }
                 } else if (event.type === "ask") {
                   await db.from("messages").insert({
                     project_id: run.project_id,

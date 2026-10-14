@@ -4,8 +4,8 @@
  * model identifiers, and vendor names.
  *
  * Public model IDs exposed to client:
- *   - "build-max" -> Flagship ZarGPT Build Max (defaults to upstream mercury-2.5)
- *   - "build-mini" -> Agile ZarGPT Build Mini (defaults to upstream mercury-2)
+ *   - "build-max" -> Flagship Build Max (defaults to upstream mercury-2.5)
+ *   - "build-mini" -> Agile Build Mini (defaults to upstream mercury-2)
  */
 
 export type PublicModelId = "build-max" | "build-mini";
@@ -33,7 +33,10 @@ export interface UpstreamConfig {
 }
 
 export function getUpstreamConfig(): UpstreamConfig {
-  const baseUrl = (process.env.UPSTREAM_BASE_URL || "https://api.inceptionlabs.ai/v1").replace(/\/+$/, "");
+  const baseUrl = (process.env.UPSTREAM_BASE_URL || "https://api.inceptionlabs.ai/v1").replace(
+    /\/+$/,
+    "",
+  );
   const modelMax = process.env.UPSTREAM_MODEL_MAX || "mercury-2.5";
   const modelMini = process.env.UPSTREAM_MODEL_MINI || "mercury-2";
 
@@ -73,12 +76,12 @@ export function markKeySuccess(_keyString: string) {
 export function sanitizeOutput(text: string): string {
   if (!text) return "";
   return text
-    .replace(/mercury[-_ ]?2\.5/gi, "ZarGPT Build Max")
-    .replace(/mercury[-_ ]?2/gi, "ZarGPT Build Mini")
-    .replace(/mercury/gi, "ZarGPT Engine")
-    .replace(/inception[-_ ]?labs/gi, "ZarGPT AI")
+    .replace(/mercury[-_ ]?2\.5/gi, "Build Max")
+    .replace(/mercury[-_ ]?2/gi, "Build Mini")
+    .replace(/mercury/gi, "DevLoadable Engine")
+    .replace(/inception[-_ ]?labs/gi, "DevLoadable AI")
     .replace(/api\.inceptionlabs\.ai/gi, "engine.devloadable.internal")
-    .replace(/inception/gi, "ZarGPT");
+    .replace(/inception/gi, "DevLoadable");
 }
 
 export function getUpstreamModel(publicId: PublicModelId): string {

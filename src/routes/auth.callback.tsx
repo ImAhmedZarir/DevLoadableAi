@@ -28,15 +28,13 @@ export function AuthCallbackPage() {
           navigate({ to: "/dashboard", replace: true });
         } else {
           // Listen for onAuthStateChange in case session is being processed from hash
-          const { data: authListener } = supabase.auth.onAuthStateChange(
-            async (event, session) => {
-              if (session && mounted) {
-                toast.success("Successfully signed in!");
-                authListener.subscription.unsubscribe();
-                navigate({ to: "/dashboard", replace: true });
-              }
-            },
-          );
+          const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session && mounted) {
+              toast.success("Successfully signed in!");
+              authListener.subscription.unsubscribe();
+              navigate({ to: "/dashboard", replace: true });
+            }
+          });
         }
       } catch (err) {
         toast.error("Failed to complete sign in.");

@@ -11,10 +11,7 @@ import { Check, Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () =>
-    pageMeta(
-      "Sign in",
-      "Sign in to DevLoadable to create, edit, and publish your applications. Part of ZarGPT.",
-    ),
+    pageMeta("Sign in", "Sign in to DevLoadable to create, edit, and publish your applications."),
 });
 
 export function AuthPage() {
@@ -196,7 +193,7 @@ export function AuthPage() {
           </div>
 
           <h1 className="text-xl font-semibold tracking-tight text-foreground">
-            {mode === "signin" ? "Sign in to ZarGPT DevLoadable" : "Create your account"}
+            {mode === "signin" ? "Sign in to DevLoadable" : "Create your account"}
           </h1>
           <p className="mt-1 text-xs text-muted-foreground">
             {mode === "signin"

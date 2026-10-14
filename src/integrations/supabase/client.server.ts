@@ -38,9 +38,7 @@ function createSupabaseAdminClient() {
     process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_KEY"];
 
   if (!SUPABASE_URL) {
-    throw new Error(
-      "[Supabase] Missing SUPABASE_URL or VITE_SUPABASE_URL environment variable.",
-    );
+    throw new Error("[Supabase] Missing SUPABASE_URL or VITE_SUPABASE_URL environment variable.");
   }
 
   if (!SUPABASE_SERVICE_ROLE_KEY) {

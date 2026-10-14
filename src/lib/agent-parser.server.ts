@@ -609,7 +609,10 @@ export function applyFileEdit(
         const before = cLines.slice(0, start);
         const after = cLines.slice(end + 1);
         const replaced = [...before, ...adjustedNLines, ...after].join("\n");
-        return { success: true, result: isOriginalCRLF ? replaced.replace(/\n/g, "\r\n") : replaced };
+        return {
+          success: true,
+          result: isOriginalCRLF ? replaced.replace(/\n/g, "\r\n") : replaced,
+        };
       }
     }
   }
@@ -626,7 +629,10 @@ export function applyFileEdit(
         if (cssMatches.length === 1) {
           const fullRule = cssMatches[0][1];
           const replaced = cNorm.replace(fullRule, nStripped || nNorm);
-          return { success: true, result: isOriginalCRLF ? replaced.replace(/\n/g, "\r\n") : replaced };
+          return {
+            success: true,
+            result: isOriginalCRLF ? replaced.replace(/\n/g, "\r\n") : replaced,
+          };
         }
       }
     }
@@ -977,7 +983,9 @@ export class AgentStreamingParser {
         if (
           filePath &&
           fileContent &&
-          !this.events.some((e) => (e.type === "write" || e.type === "edit") && "path" in e && e.path === filePath)
+          !this.events.some(
+            (e) => (e.type === "write" || e.type === "edit") && "path" in e && e.path === filePath,
+          )
         ) {
           this.emit({ type: "write", path: filePath, content: fileContent.trim() });
         }

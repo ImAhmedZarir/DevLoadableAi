@@ -32,7 +32,10 @@ export function getUtcMidnightReset(): { resetAt: string; secondsUntilReset: num
   const nextMidnightUtc = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0),
   );
-  const secondsUntilReset = Math.max(0, Math.floor((nextMidnightUtc.getTime() - now.getTime()) / 1000));
+  const secondsUntilReset = Math.max(
+    0,
+    Math.floor((nextMidnightUtc.getTime() - now.getTime()) / 1000),
+  );
   return {
     resetAt: nextMidnightUtc.toISOString(),
     secondsUntilReset,

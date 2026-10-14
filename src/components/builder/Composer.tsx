@@ -132,7 +132,12 @@ export function Composer({
               toast.success(`Extracted ${extracted.length} code file(s) from ${f.name}`);
               onFileAttach?.({
                 name: f.name,
-                content: `[ZIP ARCHIVE: ${f.name} containing ${extracted.length} files]\n${extracted.slice(0, 50).map((e) => `- ${e.path} (${e.content.length}b)`).join("\n")}${extracted.length > 50 ? `\n...and ${extracted.length - 50} more files` : ""}`,
+                content: `[ZIP ARCHIVE: ${f.name} containing ${extracted.length} files]\n${extracted
+                  .slice(0, 50)
+                  .map((e) => `- ${e.path} (${e.content.length}b)`)
+                  .join(
+                    "\n",
+                  )}${extracted.length > 50 ? `\n...and ${extracted.length - 50} more files` : ""}`,
                 size: f.size,
                 type: "application/zip",
               });
@@ -151,29 +156,29 @@ export function Composer({
         toast.error("Image upload is disabled. Please upload code, text, or zip files.");
         continue;
       }
-        const reader = new FileReader();
-        reader.onerror = () => {
-          toast.error(`Failed to read file ${f.name}`);
-        };
-        reader.onload = () => {
-          let text = String(reader.result || "").replace(/\0/g, "");
-          const MAX_TEXT_BUDGET = 120_000;
-          if (text.length > MAX_TEXT_BUDGET) {
-            text =
-              text.slice(0, MAX_TEXT_BUDGET) +
-              `\n\n[... Truncated for AI context budget, original size: ${Math.round(f.size / 1024)}KB ...]`;
-          }
-          onFileAttach?.({
-            name: f.name || `file-${Date.now()}.txt`,
-            content: text,
-            size: f.size,
-            type: f.type,
-          });
-          toast.success(`Attached ${f.name}`);
-        };
-        reader.readAsText(f);
-      }
-    };
+      const reader = new FileReader();
+      reader.onerror = () => {
+        toast.error(`Failed to read file ${f.name}`);
+      };
+      reader.onload = () => {
+        let text = String(reader.result || "").replace(/\0/g, "");
+        const MAX_TEXT_BUDGET = 120_000;
+        if (text.length > MAX_TEXT_BUDGET) {
+          text =
+            text.slice(0, MAX_TEXT_BUDGET) +
+            `\n\n[... Truncated for AI context budget, original size: ${Math.round(f.size / 1024)}KB ...]`;
+        }
+        onFileAttach?.({
+          name: f.name || `file-${Date.now()}.txt`,
+          content: text,
+          size: f.size,
+          type: f.type,
+        });
+        toast.success(`Attached ${f.name}`);
+      };
+      reader.readAsText(f);
+    }
+  };
 
   // Auto-grow textarea between 1 and 8 rows (approx 24px to 192px)
   useEffect(() => {
@@ -227,7 +232,11 @@ export function Composer({
                   {attachedFiles.length} files attached
                 </span>
                 <span className="text-[10px] text-muted-foreground shrink-0">
-                  ({Math.round(attachedFiles.reduce((acc, f) => acc + (f.size || f.content.length), 0) / 1024)}KB)
+                  (
+                  {Math.round(
+                    attachedFiles.reduce((acc, f) => acc + (f.size || f.content.length), 0) / 1024,
+                  )}
+                  KB)
                 </span>
               </div>
               <button
@@ -254,7 +263,9 @@ export function Composer({
                   className="inline-flex items-center gap-1.5 rounded-md bg-[#18181b] border border-white/10 px-2 py-0.5 text-xs text-zinc-300 shrink-0"
                 >
                   <FileText className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                  <span className="truncate max-w-[130px] font-medium text-foreground/90">{file.name}</span>
+                  <span className="truncate max-w-[130px] font-medium text-foreground/90">
+                    {file.name}
+                  </span>
                   {file.size ? (
                     <span className="text-[10px] text-muted-foreground/70 shrink-0">
                       ({Math.round(file.size / 1024) || 1}KB)
@@ -309,8 +320,8 @@ export function Composer({
           isBusy
             ? "Building... press Stop to cancel"
             : attachedFiles.length > 0
-            ? "Describe what to do with the attached file(s), or press Enter to analyze..."
-            : "Ask ZarGPT DevLoadable to build or change something..."
+              ? "Describe what to do with the attached file(s), or press Enter to analyze..."
+              : "Ask DevLoadable to build or change something..."
         }
         rows={1}
         className="w-full resize-none bg-transparent px-1 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 disabled:cursor-not-allowed disabled:opacity-60 leading-relaxed font-normal overflow-y-auto"
@@ -427,7 +438,10 @@ export function Composer({
                 <ChevronDown className="h-3 w-3 shrink-0 opacity-60" />
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-52 p-1.5 shadow-floating bg-[#121215] border-white/10">
+            <PopoverContent
+              align="end"
+              className="w-52 p-1.5 shadow-floating bg-[#121215] border-white/10"
+            >
               <div className="space-y-0.5">
                 {AVAILABLE_PROVIDERS.map((key) => (
                   <button
@@ -441,9 +455,7 @@ export function Composer({
                     }`}
                   >
                     <span>{PROVIDER_NAMES[key]}</span>
-                    {provider === key && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    )}
+                    {provider === key && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                   </button>
                 ))}
               </div>

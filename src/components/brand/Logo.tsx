@@ -11,7 +11,7 @@ export interface LogoProps {
 export function Logo({
   size = "md",
   showWordmark = true,
-  showSubtitle = true,
+  showSubtitle = false,
   className,
 }: LogoProps) {
   const sizeClasses = {
@@ -46,12 +46,17 @@ export function Logo({
 
       {showWordmark && (
         <div className="flex flex-col leading-none">
-          <span className={cn("font-bold tracking-tight text-white flex items-center gap-1.5", textClasses[size])}>
+          <span
+            className={cn(
+              "font-bold tracking-tight text-white flex items-center gap-1.5",
+              textClasses[size],
+            )}
+          >
             <span>DevLoadable</span>
           </span>
           {showSubtitle && (
             <span className="text-[10px] tracking-wider text-zinc-400 font-mono mt-0.5">
-              Part of ZarGPT
+              by ZarGPT
             </span>
           )}
         </div>

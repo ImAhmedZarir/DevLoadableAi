@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () =>
     pageMeta(
       "Your projects",
-      "Manage your DevLoadable projects, fullstack code, and published applications. Part of ZarGPT.",
+      "Manage your DevLoadable projects, fullstack code, and published applications.",
     ),
 });
 
@@ -109,7 +109,9 @@ function Dashboard() {
   const navigate = useNavigate();
   const hasCache = Boolean(dashboardDataCache && user && dashboardDataCache.userId === user.id);
   const [projects, setProjects] = useState<Project[]>(hasCache ? dashboardDataCache!.projects : []);
-  const [pubs, setPubs] = useState<Record<string, string>>(hasCache ? dashboardDataCache!.pubs : {});
+  const [pubs, setPubs] = useState<Record<string, string>>(
+    hasCache ? dashboardDataCache!.pubs : {},
+  );
   const [fileCounts, setFileCounts] = useState<Record<string, number>>(
     hasCache ? dashboardDataCache!.fileCounts : {},
   );
@@ -141,7 +143,9 @@ function Dashboard() {
       ]);
 
       const loadedProjects = p ?? [];
-      const loadedPubs = Object.fromEntries(((pb ?? []) as Pub[]).map((r) => [r.project_id, r.slug]));
+      const loadedPubs = Object.fromEntries(
+        ((pb ?? []) as Pub[]).map((r) => [r.project_id, r.slug]),
+      );
       const counts: Record<string, number> = {};
       for (const f of filesData ?? []) {
         counts[f.project_id] = (counts[f.project_id] || 0) + 1;
@@ -502,14 +506,19 @@ function Dashboard() {
                           <div className="min-w-0 flex-1">
                             <div className="truncate text-xs font-medium text-white">{p.name}</div>
                             <div className="mt-0.5 truncate text-[10px] text-zinc-400">
-                              {p.description || (fileCount > 0 ? `${fileCount} source ${fileCount === 1 ? "file" : "files"}` : "Workspace initialized")}
+                              {p.description ||
+                                (fileCount > 0
+                                  ? `${fileCount} source ${fileCount === 1 ? "file" : "files"}`
+                                  : "Workspace initialized")}
                             </div>
                           </div>
                         </div>
 
                         {/* Bottom preview meta */}
                         <div className="flex items-center justify-between text-[10px] text-zinc-500 z-10 px-0.5">
-                          <span>{fileCount} {fileCount === 1 ? "file" : "files"}</span>
+                          <span>
+                            {fileCount} {fileCount === 1 ? "file" : "files"}
+                          </span>
                           <span>{pubSlug ? "Published" : "Local only"}</span>
                         </div>
                       </div>

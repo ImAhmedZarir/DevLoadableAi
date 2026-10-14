@@ -12,10 +12,10 @@ export function generateProjectNameFromIdea(prompt: string): string {
   // 1. Explicit naming: "named X", "called X", "name: X"
   const explicitMatch =
     trimmed.match(
-      /(?:app|project|website|product)\s*(?:name|title)\s*[:=\-]\s*["']?([a-zA-Z0-9_\-\s]{2,35}?)["']?(?:\.|\n|$|,)/i,
+      /(?:app|project|website|product)\s*(?:name|title)\s*[:=-]\s*["']?([a-zA-Z0-9_\s-]{2,35}?)["']?(?:\.|\n|$|,)/i,
     ) ||
-    trimmed.match(/(?:named|called)\s*["']([a-zA-Z0-9_\-\s]{2,35})["']/i) ||
-    trimmed.match(/(?:named|called)\s+([A-Z][a-zA-Z0-9_\-]{2,25})/i);
+    trimmed.match(/(?:named|called)\s*["']([a-zA-Z0-9_\s-]{2,35})["']/i) ||
+    trimmed.match(/(?:named|called)\s+([A-Z][a-zA-Z0-9_-]{2,25})/i);
 
   if (explicitMatch && explicitMatch[1]) {
     const name = explicitMatch[1].trim();

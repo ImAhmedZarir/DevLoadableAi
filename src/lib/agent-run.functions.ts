@@ -654,7 +654,11 @@ export const runStep = createServerFn({ method: "POST" })
 
     // 4. Load project & files
     const [{ data: proj }, { data: files }, { data: history }] = await Promise.all([
-      supabase.from("projects").select("id,name,agent_notes").eq("id", run.project_id).maybeSingle(),
+      supabase
+        .from("projects")
+        .select("id,name,agent_notes")
+        .eq("id", run.project_id)
+        .maybeSingle(),
       supabase
         .from("project_files")
         .select("path,content,is_upload,updated_at")

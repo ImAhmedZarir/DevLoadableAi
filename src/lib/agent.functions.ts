@@ -727,9 +727,7 @@ export const downloadProjectZip = createServerFn({ method: "POST" })
     const buf = await zip.generateAsync({ type: "nodebuffer" });
 
     // Efficient base64 stringification via Node Buffer without string-concatenation memory explosion
-    const b64 = Buffer.isBuffer(buf)
-      ? buf.toString("base64")
-      : Buffer.from(buf).toString("base64");
+    const b64 = Buffer.isBuffer(buf) ? buf.toString("base64") : Buffer.from(buf).toString("base64");
 
     const safeProjName = (proj.name || `project-${data.projectId}`)
       .toLowerCase()

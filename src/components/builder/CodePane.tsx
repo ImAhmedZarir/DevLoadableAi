@@ -452,14 +452,18 @@ function CodePaneComponent({
           <div className="flex items-center gap-1.5 overflow-hidden">
             {getFileIcon(child.path)}
             <span className="truncate">{name}</span>
-            {isFileDirty && <span className="h-1.5 w-1.5 rounded-full bg-amber-400" title="Unsaved changes" />}
+            {isFileDirty && (
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" title="Unsaved changes" />
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {isUpdated && (
               <span className="h-1.5 w-1.5 rounded-full bg-brand" title="Changed in latest run" />
             )}
-            <span className="text-[10px] text-muted-foreground/60 group-hover:hidden">{fileSize}</span>
+            <span className="text-[10px] text-muted-foreground/60 group-hover:hidden">
+              {fileSize}
+            </span>
             {onDeleteFile && !readOnly && (
               <button
                 type="button"
@@ -479,7 +483,9 @@ function CodePaneComponent({
   return (
     <div className="flex flex-col md:grid md:grid-cols-[250px_1fr] h-full divide-y md:divide-y-0 md:divide-x divide-border/80 bg-background overflow-hidden relative">
       {/* Left File Tree (250px on desktop, full-width toggleable on mobile) */}
-      <div className={`${mobileShowExplorer ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-card/40 w-full md:w-[250px] shrink-0`}>
+      <div
+        className={`${mobileShowExplorer ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-card/40 w-full md:w-[250px] shrink-0`}
+      >
         {/* Explorer Header */}
         <div className="flex items-center justify-between border-b border-border/80 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
           <span>Explorer</span>
@@ -583,7 +589,9 @@ function CodePaneComponent({
       </div>
 
       {/* Right Pane: Open File Tabs + VS Code-style Interactive Editor */}
-      <div className={`${!mobileShowExplorer ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-[#0d0d12] min-w-0`}>
+      <div
+        className={`${!mobileShowExplorer ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-[#0d0d12] min-w-0`}
+      >
         {/* Open File Tabs */}
         {openTabs.length > 0 && (
           <div className="flex items-center overflow-x-auto border-b border-border/80 bg-card/30 px-2 pt-1.5 select-none">
@@ -604,7 +612,10 @@ function CodePaneComponent({
                   {getFileIcon(tabPath)}
                   <span className="truncate max-w-[130px]">{fileName}</span>
                   {isTabDirty && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400" title="Unsaved changes" />
+                    <span
+                      className="h-1.5 w-1.5 rounded-full bg-amber-400"
+                      title="Unsaved changes"
+                    />
                   )}
                   {openTabs.length > 1 && (
                     <button
@@ -730,7 +741,9 @@ function CodePaneComponent({
                 <span className="hidden sm:inline">UTF-8</span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="truncate max-w-[100px] sm:max-w-none">{getLanguageLabel(activePath)}</span>
+                <span className="truncate max-w-[100px] sm:max-w-none">
+                  {getLanguageLabel(activePath)}
+                </span>
               </div>
             </div>
           </>

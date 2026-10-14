@@ -238,7 +238,9 @@ export function CodeViewer({ files, recentlyUpdated = new Map(), onDownloadZip }
   return (
     <div className="flex flex-col md:grid md:grid-cols-[240px_1fr] h-full divide-y md:divide-y-0 md:divide-x divide-border/60 bg-card/20 overflow-hidden relative">
       {/* Left pane: File tree (toggleable on mobile) */}
-      <div className={`${mobileShowFiles ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-card/40 w-full md:w-auto shrink-0`}>
+      <div
+        className={`${mobileShowFiles ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-card/40 w-full md:w-auto shrink-0`}
+      >
         <div className="flex items-center justify-between border-b border-border/60 px-3 py-2 text-xs">
           <div className="font-semibold text-foreground">Project Files</div>
           <div className="flex items-center gap-2">
@@ -268,7 +270,9 @@ export function CodeViewer({ files, recentlyUpdated = new Map(), onDownloadZip }
       </div>
 
       {/* Right pane: Code content with line numbers */}
-      <div className={`${!mobileShowFiles ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-background/50 min-w-0`}>
+      <div
+        className={`${!mobileShowFiles ? "flex" : "hidden"} md:flex h-full flex-col overflow-hidden bg-background/50 min-w-0`}
+      >
         {selectedFile ? (
           <>
             {/* Toolbar */}
