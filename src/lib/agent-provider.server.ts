@@ -346,7 +346,7 @@ export function streamModel(
     };
 
     let attempt = 0;
-    const maxAttempts = 3;
+    const maxAttempts = Math.min(Math.max(getKeyCount(), 3), 6);
 
     while (attempt < maxAttempts) {
       attempt++;
